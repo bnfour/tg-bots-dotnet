@@ -1,9 +1,13 @@
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-app.MapGet("/", () => "\"Hello World!\" from bnfour's Telegram bots, now on dotnet!");
+app.UseStaticFiles();
+
 app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}");
 
 app.Run();
