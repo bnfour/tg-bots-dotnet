@@ -5,6 +5,7 @@ var app = builder.Build();
 
 app.UseStaticFiles();
 
+app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}");
