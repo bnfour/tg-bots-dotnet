@@ -8,5 +8,5 @@ public abstract class BotOptionsBase
     /// <summary>
     /// Telegram bot token. If set to null, the bot is disabled.
     /// </summary>
-    string? Token { get; set; }
+    public string? Token { get; set; }
 }
