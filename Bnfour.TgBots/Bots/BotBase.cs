@@ -21,6 +21,11 @@ public abstract class BotBase
     private readonly string? _webhookUrl;
 
     /// <summary>
+    /// Bot's token. Used to verify update origin.
+    /// </summary>
+    private readonly string? _token;
+
+    /// <summary>
     /// Indicates if the bot is inline and is able to handle inline queries.
     /// </summary>
     protected abstract bool Inline { get; }
@@ -46,7 +51,18 @@ public abstract class BotBase
             // don't care about the slash being or not being at the end of the URL
             _webhookUrl = webhookIndex.TrimEnd('/') + "/" + options.Token;
             _client = new TelegramBotClient(options.Token);
+            _token = options.Token;
         }
+    }
+
+    /// <summary>
+    /// Checks whether passed string is an actual bot token to verify the request actully comes from Telegram backend.
+    /// </summary>
+    /// <param name="givenToken">Token received from request.</param>
+    /// <returns>True for actual token, false otherwise.</returns>
+    public bool IsToken(string givenToken)
+    {
+        return givenToken.Equals(_token);
     }
 
     /// <summary>
