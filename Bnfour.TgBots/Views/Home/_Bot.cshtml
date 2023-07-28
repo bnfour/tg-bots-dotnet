@@ -1,0 +1,9 @@
+@model Bnfour.TgBots.Models.BotInfoModel
+@if (Model.IsOnline)
+{
+    <span><a href="https://t.me/@Model.Username">@@@Model.Username</a></span>
+}
+else
+{
+    <span class="disabled">N/A</span>
+}
