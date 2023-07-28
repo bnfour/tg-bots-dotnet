@@ -1,12 +1,16 @@
 using Bnfour.TgBots.Bots;
 using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options;
 using Microsoft.Extensions.Options;
 using Telegram.Bot.Types;
 
 namespace Bnfour.TgBots.Services;
 
-public class BotManagerService : IBotManagerService
+/// <summary>
+/// Class that holds all the bots and manages their communication with the outside world.
+/// </summary>
+public class BotManagerService : IBotManagerService, IBotInfoProviderService
 {
     /// <summary>
     /// List of bots available in this app.
@@ -17,6 +21,8 @@ public class BotManagerService : IBotManagerService
     /// Shorthand property to query only enabled bots.
     /// </summary>
     private IEnumerable<BotBase> _activeBots => _bots.Where(b => b.Enabled);
+
+    #region IBotManagerService implementation
 
     public BotManagerService(IOptions<ApplicationOptions> options)
     {
@@ -56,4 +62,21 @@ public class BotManagerService : IBotManagerService
             await bot.RemoveWebhook();
         }
     }
+
+    #endregion
+
+    #region IBotInfoProviderService implementation
+
+    public async Task<IEnumerable<BotInfoModel>> GetInfo()
+    {
+        // TODO actual bot info
+        return new List<BotInfoModel>
+            {
+                new BotInfoModel { IsOnline = true, Username = "bndebug_bot" },
+                new BotInfoModel { IsOnline = false, Username = null }
+            }
+            .AsEnumerable();
+    }
+
+    #endregion
 }

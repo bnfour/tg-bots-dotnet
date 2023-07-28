@@ -22,8 +22,5 @@ public interface IBotManagerService
     /// </summary>
     /// <param name="token">Token from URL, used for auth and selecting a matching bot.</param>
     /// <param name="update">Update to handle by one of the bots.</param>
-    /// <returns></returns>
     Task HandleUpdate(string token, Update update);
-
-    // TODO also provide bot info models for the status/landing page
 }
