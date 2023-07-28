@@ -1,3 +1,4 @@
+using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options.BotOptions;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -34,7 +35,7 @@ public abstract class BotBase
     /// If set to false, the bot is not available and will throw on API usage.
     /// Checking for this is supposed to be caller's responsibility.
     /// </summary>
-    public bool Enabled => _client != null && _webhookUrl != null;
+    public bool Enabled => _client != null || _webhookUrl != null;
 
     // TODO looks scuffed, any way to include the index URL in the options
     // while still declaring it once?
@@ -46,7 +47,7 @@ public abstract class BotBase
     /// <param name="options">Bot-specific options.</param>
     public BotBase(string webhookIndex, BotOptionsBase options)
     {
-        if (options.Token != null)
+        if (!string.IsNullOrEmpty(options.Token))
         {
             // don't care about the slash being or not being at the end of the URL
             _webhookUrl = webhookIndex.TrimEnd('/') + "/" + options.Token;
@@ -304,4 +305,17 @@ public abstract class BotBase
     }
 
     #endregion
+
+    /// <summary>
+    /// Gets bot info for the "landing" page.
+    /// </summary>
+    /// <returns>Bot info for the "landing" page.</returns>
+    public async Task<BotInfoModel> GetModel()
+    {
+        return new BotInfoModel
+        {
+            IsOnline = Enabled,
+            Username = Enabled ? (await _client!.GetMeAsync()).Username : null
+        };
+    }
 }

@@ -29,7 +29,7 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
         // TODO fill with bot instances
         _bots = new()
         {
-            // create and configure bots here
+
         };
     }
 
@@ -67,15 +67,17 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
 
     #region IBotInfoProviderService implementation
 
-    public async Task<IEnumerable<BotInfoModel>> GetInfo()
+    // TODO make this method async somehow?
+    // it's not async and returns Task.FromResult just to prevent CS1998
+    // using async in ForEach apparently does not make the whole method async
+    public Task<IEnumerable<BotInfoModel>> GetInfo()
     {
-        // TODO actual bot info
-        return new List<BotInfoModel>
-            {
-                new BotInfoModel { IsOnline = true, Username = "bndebug_bot" },
-                new BotInfoModel { IsOnline = false, Username = null }
-            }
-            .AsEnumerable();
+        var ret = new List<BotInfoModel>();
+        _bots.ForEach(async b =>
+        {
+            ret.Add(await b.GetModel());
+        });
+        return Task.FromResult(ret.AsEnumerable());
     }
 
     #endregion
