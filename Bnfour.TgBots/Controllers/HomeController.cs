@@ -1,12 +1,24 @@
-using System;
+using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bnfour.TgBots.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
+    private readonly IBotInfoProviderService _infoProvider;
+
+    public HomeController(IBotInfoProviderService infoProvider)
     {
-        return View();
+        _infoProvider = infoProvider;
+    }
+
+    public async Task<IActionResult> Index()
+    {
+        var model = new HomeModel
+        {
+            Bots = await _infoProvider.GetInfo()
+        };
+        return View(model);
     }
 }

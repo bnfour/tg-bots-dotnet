@@ -1,0 +1,8 @@
+@model IEnumerable<Bnfour.TgBots.Models.BotInfoModel>
+<div class="bot-list">
+    @foreach (var bot in Model)
+    {
+        @await Html.PartialAsync("_Bot.cshtml", bot)
+    }
+    <span>&hellip;more to come?</span>
+</div>

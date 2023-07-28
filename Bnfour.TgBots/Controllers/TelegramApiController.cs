@@ -1,3 +1,5 @@
+using System.Net;
+using Bnfour.TgBots.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
 
@@ -5,6 +7,13 @@ namespace Bnfour.TgBots.Controllers;
 
 public class TelegramApiController : Controller
 {
+    private readonly IBotManagerService _service;
+
+    public TelegramApiController(IBotManagerService service)
+    {
+        _service = service;
+    }
+
     // POST /{bot token}
 
     /// <summary>
@@ -17,6 +26,16 @@ public class TelegramApiController : Controller
     [HttpPost, Route("{token}")]
     public async Task<ActionResult> HandleTelegramCall(string token, [FromBody] Update update)
     {
-        return StatusCode(418, token);
+        try
+        {
+            await _service.HandleUpdate(token, update);
+            return Ok();
+        }
+        // TODO better handling when exceptions are thrown inside, at least:
+        // 404 for wrong tokens, 400 bad request for missing data/inline queries for non-inline bot
+        catch
+        {
+            return StatusCode((int)HttpStatusCode.InternalServerError);
+        }
     }
 }
