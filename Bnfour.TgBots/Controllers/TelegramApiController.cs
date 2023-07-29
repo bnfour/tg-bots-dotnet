@@ -40,6 +40,10 @@ public class TelegramApiController : Controller
         {
             return UnprocessableEntity();
         }
+        catch (NoRequiredDataException)
+        {
+            return BadRequest();
+        }
         catch
         {
             return StatusCode((int)HttpStatusCode.InternalServerError);

@@ -149,7 +149,7 @@ public abstract class BotBase
         }
         else
         {
-            throw new ApplicationException("Unsupported message type we did't subscribe for, or empty message and inline query.");
+            throw new NoRequiredDataException("Update.Message and/or Update.InlineQuery");
         }
     }
 
@@ -161,7 +161,7 @@ public abstract class BotBase
     {
         if (message.From == null)
         {
-            throw new ApplicationException("No user in message");
+            throw new NoRequiredDataException("Message.From");
         }
 
         switch (message.Type)
@@ -170,6 +170,7 @@ public abstract class BotBase
                 await HandleText(message);
                 break;
             // TODO other message types
+            // all unsupported types are treated as an unrecognized text
             default:
                 await ReplyToArbitaryText(message.From.Id);
                 break;
