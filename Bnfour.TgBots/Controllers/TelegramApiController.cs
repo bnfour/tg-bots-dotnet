@@ -1,4 +1,5 @@
 using System.Net;
+using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
@@ -22,7 +23,8 @@ public class TelegramApiController : Controller
     /// <param name="token">Token of the bot the call is addressed to.
     /// Also used to verify it's actually Telegram calling us, as no one else is supposed to know it.</param>
     /// <param name="update">Update with a message from a user we want to process.</param>
-    /// <returns>HTTP status code:<br/>200 if request is processed,<br/>404 if no bot with given token is found,<br/>500 if anything goes wrong.</returns>
+    /// <returns>HTTP status code:<br/>- 200 if request is processed,<br/>- 404 if no bot with given token is found,<br/>
+    /// - 400 if request is malformed,<br/>- 422 if request contains an inline query to a not-inline bot<br/>- 500 if anything else goes wrong.</returns>
     [HttpPost, Route("{token}")]
     public async Task<ActionResult> HandleTelegramCall(string token, [FromBody] Update update)
     {
@@ -31,8 +33,18 @@ public class TelegramApiController : Controller
             await _service.HandleUpdate(token, update);
             return Ok();
         }
-        // TODO better handling when exceptions are thrown inside, at least:
-        // 404 for wrong tokens, 400 bad request for missing data/inline queries for non-inline bot
+        catch (NoSuchTokenException)
+        {
+            return NotFound();
+        }
+        catch (NotAnInlineBotException)
+        {
+            return UnprocessableEntity();
+        }
+        catch (NoRequiredDataException)
+        {
+            return BadRequest();
+        }
         catch
         {
             return StatusCode((int)HttpStatusCode.InternalServerError);
