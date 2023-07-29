@@ -1,4 +1,5 @@
 using System.Net;
+using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Telegram.Bot.Types;
@@ -33,6 +34,10 @@ public class TelegramApiController : Controller
         }
         // TODO better handling when exceptions are thrown inside, at least:
         // 404 for wrong tokens, 400 bad request for missing data/inline queries for non-inline bot
+        catch (NoSuchTokenException)
+        {
+            return NotFound();
+        }
         catch
         {
             return StatusCode((int)HttpStatusCode.InternalServerError);

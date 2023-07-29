@@ -1,4 +1,5 @@
 using Bnfour.TgBots.Bots;
+using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Interfaces;
 using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options;
@@ -43,7 +44,7 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
         }
         else
         {
-            // TODO throw something to return 404 status code
+            throw new NoSuchTokenException();
         }
     }
 
