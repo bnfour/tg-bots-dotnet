@@ -1,3 +1,4 @@
+using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options.BotOptions;
 using Telegram.Bot;
@@ -139,8 +140,7 @@ public abstract class BotBase
             }
             else
             {
-                // TODO throw a custom exception here so we can return a 4xx code instead of 5xx
-                throw new NotImplementedException("This bot does not support inline queries");
+                throw new NotAnInlineBotException();
             }
         }
         else if (update.Message != null)

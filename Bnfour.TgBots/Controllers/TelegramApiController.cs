@@ -32,11 +32,13 @@ public class TelegramApiController : Controller
             await _service.HandleUpdate(token, update);
             return Ok();
         }
-        // TODO better handling when exceptions are thrown inside, at least:
-        // 404 for wrong tokens, 400 bad request for missing data/inline queries for non-inline bot
         catch (NoSuchTokenException)
         {
             return NotFound();
+        }
+        catch (NotAnInlineBotException)
+        {
+            return UnprocessableEntity();
         }
         catch
         {
