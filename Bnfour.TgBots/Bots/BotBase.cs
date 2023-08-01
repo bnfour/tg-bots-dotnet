@@ -1,3 +1,4 @@
+using System.Reflection;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options.BotOptions;
@@ -31,6 +32,12 @@ public abstract class BotBase
     /// Indicates if the bot is inline and is able to handle inline queries.
     /// </summary>
     protected abstract bool Inline { get; }
+
+    /// <summary>
+    /// Name of the bot as it appears in /about command.
+    /// Please note that this value should be MarkdownV2 friendly.
+    /// </summary>
+    protected abstract string Name { get; }
 
     /// <summary>
     /// If set to false, the bot is not available and will throw on API usage.
@@ -292,15 +299,15 @@ public abstract class BotBase
     }
 
     /// <summary>
-    /// Handles /about command by sending bot info: name, version, and repo link.
+    /// Handles /about command by sending bot info: <see cref="Name"/>, version, and repo link.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleAboutCommand(long userId)
     {
-        await Send(userId, """
-        bot\-name\-goes\-here version
+        await Send(userId, $"""
+        **{Name}** {GetVersion()}\.
 
-        Part of mini bots suite\. [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
+        [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
         by bnfour, 2023\.
         """);
     }
@@ -318,5 +325,21 @@ public abstract class BotBase
             IsOnline = Enabled,
             Username = Enabled ? (await _client!.GetMeAsync()).Username : null
         };
+    }
+
+    /// <summary>
+    /// Get the app version for about command.
+    /// </summary>
+    /// <returns>The version as a string ready to be put to bot's response,
+    /// with MarkdownV2 formatting and everything.</returns>
+    private string GetVersion()
+    {
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        // dot is escaped for tg's markdown
+        var formattedVersion = $"{version?.Major ?? -1}\\.{version?.Minor ?? -1}";
+        #if DEBUG
+            formattedVersion += " debug";
+        #endif
+        return formattedVersion;
     }
 }
