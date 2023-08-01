@@ -47,23 +47,27 @@ public abstract class BotBase
 
     /// <summary>
     /// Text to respond to /help command with. Should contain general description of the bot, and a command list.
+    /// Please note that this should be MarkdownV2 friendly.
     /// </summary>
     protected abstract string HelpResponse { get; }
 
     /// <summary>
     /// Text to respond to /start command with. Should briefly inform user what the bot is capable of.
+    /// Please note that this should be MarkdownV2 friendly.
     /// </summary>
     protected abstract string StartResponse { get; }
 
     /// <summary>
     /// Text to send when the user input is a command (starts with slash), but no matching command is found.
+    /// Please note that this should be MarkdownV2 friendly.
     /// </summary>
-    protected virtual string UnknownCommandResponse => "Unfortunately, this is not a command I recognize. Try running /help command.";
+    protected virtual string UnknownCommandResponse => "Unfortunately, this is not a command I recognize. Try running /help command.".ToMarkdownV2();
 
     /// <summary>
     /// Text to send when the user input does not match anything else; just to signal the bot is working.
+    /// Please note that this should be MarkdownV2 friendly.
     /// </summary>
-    protected virtual string UnknownTextResponse => "I did not quite catch that.";
+    protected virtual string UnknownTextResponse => "I did not quite catch that.".ToMarkdownV2();
 
     #endregion
 
@@ -294,7 +298,7 @@ public abstract class BotBase
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task ReplyToArbitaryText(long userId)
     {
-        await Send(userId, UnknownTextResponse.ToMarkdownV2());
+        await Send(userId, UnknownTextResponse);
     }
 
     /// <summary>
@@ -304,7 +308,7 @@ public abstract class BotBase
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task ReplyToUnknownCommand(long userId)
     {
-        await Send(userId, UnknownCommandResponse.ToMarkdownV2());
+        await Send(userId, UnknownCommandResponse);
     }
 
     #endregion
@@ -318,7 +322,7 @@ public abstract class BotBase
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleStartCommand(long userId)
     {
-        await Send(userId, StartResponse.ToMarkdownV2());
+        await Send(userId, StartResponse);
     }
 
     /// <summary>
@@ -328,7 +332,7 @@ public abstract class BotBase
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleHelpCommand(long userId)
     {
-        await Send(userId, HelpResponse.ToMarkdownV2());
+        await Send(userId, HelpResponse);
     }
 
     /// <summary>
