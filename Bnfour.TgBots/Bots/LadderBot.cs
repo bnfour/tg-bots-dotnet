@@ -20,7 +20,40 @@ public class LadderBot : BotBase
 
     protected override string Name => "Ladder bot";
 
-    protected override string HelpResponse => throw new NotImplementedException();
+    protected override string HelpResponse => """
+    I'll provide two prompts for a query "sample text"
+    One with spaces:
+    ```
+    S A M P L E   T E X T
+    A A
+    M   M
+    P     P
+    L       L
+    E         E
+
+    T             T
+    E               E
+    X                 X
+    T                   T
+    ```
+
+    And the second one without spaces, which is useful for longer strings:
+    ```
+    SAMPLE TEXT
+    AA
+    M M
+    P  P
+    L   L
+    E    E
+
+    T      T
+    E       E
+    X        X
+    T         T
+    ```
+
+    That's pretty much it\.
+    """;
 
     protected override string StartResponse => """
     Hi there!
@@ -36,7 +69,7 @@ public class LadderBot : BotBase
             return true;
         }
         // undocumented custom commands
-        // (a way to test if this "framework even works")
+        // (a way to test if this "framework" even works)
         switch (command)
         {
             case "/ping":
