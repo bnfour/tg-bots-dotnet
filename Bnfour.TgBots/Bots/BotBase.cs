@@ -1,4 +1,6 @@
+using System.Reflection;
 using Bnfour.TgBots.Exceptions;
+using Bnfour.TgBots.Extensions;
 using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options.BotOptions;
 using Telegram.Bot;
@@ -17,6 +19,8 @@ public abstract class BotBase
     /// </summary>
     protected readonly TelegramBotClient? _client;
 
+    #region configuration
+
     /// <summary>
     /// URL to be used as webhook endpoint. If null, the bot is considered disabled.
     /// </summary>
@@ -27,10 +31,41 @@ public abstract class BotBase
     /// </summary>
     private readonly string? _token;
 
+    #endregion
+
+    #region customization
+
     /// <summary>
     /// Indicates if the bot is inline and is able to handle inline queries.
     /// </summary>
     protected abstract bool Inline { get; }
+
+    /// <summary>
+    /// Name of the bot as it appears in /about command.
+    /// </summary>
+    protected abstract string Name { get; }
+
+    /// <summary>
+    /// Text to respond to /help command with. Should contain general description of the bot, and a command list.
+    /// </summary>
+    protected abstract string HelpResponse { get; }
+
+    /// <summary>
+    /// Text to respond to /start command with. Should briefly inform user what the bot is capable of.
+    /// </summary>
+    protected abstract string StartResponse { get; }
+
+    /// <summary>
+    /// Text to send when the user input is a command (starts with slash), but no matching command is found.
+    /// </summary>
+    protected virtual string UnknownCommandResponse => "Unfortunately, this is not a command I recognize. Try running /help command.";
+
+    /// <summary>
+    /// Text to send when the user input does not match anything else; just to signal the bot is working.
+    /// </summary>
+    protected virtual string UnknownTextResponse => "I did not quite catch that.";
+
+    #endregion
 
     /// <summary>
     /// If set to false, the bot is not available and will throw on API usage.
@@ -109,6 +144,8 @@ public abstract class BotBase
 
     #endregion
 
+    #region  message handling
+
     /// <summary>
     /// Sends a message, formated in MarkdownV2. See https://core.telegram.org/bots/api#markdownv2-style
     /// </summary>
@@ -179,6 +216,7 @@ public abstract class BotBase
 
     /// <summary>
     /// Handles an inline query, if the bot is designated as an inline bot.
+    /// May not be implemented for non-inline bots.
     /// </summary>
     /// <param name="inlineQuery">Inline query to process.</param>
     protected abstract Task HandleInlineQuery(InlineQuery inlineQuery);
@@ -245,28 +283,28 @@ public abstract class BotBase
         }
     }
 
-    // note to self: don't forget the replies are in MarkdownV2
-    // TODO make these strings changeable in descendants, finalize the wordings
-    // maybe some variables for bot instances to fill, like its name?
+    #endregion
 
     #region error replies
 
     /// <summary>
     /// Sends a message indicating the text (or other unsupported message type) was not recognized (it's not a command at all).
+    /// The message is set in <see cref="UnknownTextResponse"/>.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task ReplyToArbitaryText(long userId)
     {
-        await Send(userId, @"I did not quite catch that\.");
+        await Send(userId, UnknownTextResponse.ToMarkdownV2());
     }
 
     /// <summary>
     /// Sends a message indicating the text was recognized as a command, but there is no such command available.
+    /// The message is set in <see cref="UnknownCommandResponse"/>.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task ReplyToUnknownCommand(long userId)
     {
-        await Send(userId, @"Unfortunately, this is not a command I recognize\. Try running /help command\.");
+        await Send(userId, UnknownCommandResponse.ToMarkdownV2());
     }
 
     #endregion
@@ -275,37 +313,42 @@ public abstract class BotBase
 
     /// <summary>
     /// Handles /start command by sending a welcome message to the user.
+    /// The message is set in <see cref="StartResponse"/>.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleStartCommand(long userId)
     {
-        await Send(userId, @"Welcome\!");
+        await Send(userId, StartResponse.ToMarkdownV2());
     }
 
     /// <summary>
     /// Handles /help command by sending a usage help message to the user.
+    /// The message is set in <see cref="HelpResponse"/>.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleHelpCommand(long userId)
     {
-        await Send(userId, @"Some kind of message about how to use this bot I guess\.");
+        await Send(userId, HelpResponse.ToMarkdownV2());
     }
 
     /// <summary>
-    /// Handles /about command by sending bot info: name, version, and repo link.
+    /// Handles /about command by sending bot info: <see cref="Name"/>, version, and repo link.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleAboutCommand(long userId)
     {
-        await Send(userId, """
-        bot\-name\-goes\-here version
+        // version is not put through ToMarkdownV2 because the only thing to escape there is a single dot
+        await Send(userId, $"""
+        **{Name.ToMarkdownV2()}** {GetVersion()}\.
 
-        Part of mini bots suite\. [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
+        [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
         by bnfour, 2023\.
         """);
     }
 
     #endregion
+
+    # region miscellaneous data gathering
 
     /// <summary>
     /// Gets bot info for the "landing" page.
@@ -319,4 +362,23 @@ public abstract class BotBase
             Username = Enabled ? (await _client!.GetMeAsync()).Username : null
         };
     }
+
+    /// <summary>
+    /// Get the app version for about command.
+    /// </summary>
+    /// <returns>The version as a string ready to be put to bot's response,
+    /// with MarkdownV2 formatting and everything.</returns>
+    private string GetVersion()
+    {
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        // dot is escaped for tg's markdown
+        var formattedVersion = $"{version?.Major ?? 0}\\.{version?.Minor ?? 0}";
+        #if DEBUG
+            formattedVersion += " debug";
+        #endif
+        return formattedVersion;
+    }
+
+    #endregion
+
 }
