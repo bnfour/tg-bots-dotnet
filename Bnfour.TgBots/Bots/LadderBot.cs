@@ -1,3 +1,4 @@
+using Bnfour.TgBots.Extensions;
 using Bnfour.TgBots.Options.BotOptions;
 using Telegram.Bot.Types;
 
@@ -25,7 +26,7 @@ public class LadderBot : BotBase
     Hi there!
 
     I'm an inline bot, so feel free to summon me in other chats to get prompts for ladder-like texts.
-    """;
+    """.ToMarkdownV2();
 
     protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {
