@@ -24,7 +24,7 @@ public abstract class BotBase
     /// <summary>
     /// URL to be used as webhook endpoint. If null, the bot is considered disabled.
     /// </summary>
-    private readonly string? _webhookUrl;
+    protected readonly string? _webhookUrl;
 
     /// <summary>
     /// Bot's token. Used to verify update origin.
@@ -265,7 +265,7 @@ public abstract class BotBase
     /// <param name="userId">User that sent the command.</param>
     /// <param name="fullText">Full text of the command, in case arguments matter.</param>
     /// <returns>True if command was found and executed, false otherwise.</returns>
-    protected async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
+    protected virtual async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {
         switch (command)
         {
