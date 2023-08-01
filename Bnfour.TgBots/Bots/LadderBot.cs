@@ -34,10 +34,16 @@ public class LadderBot : BotBase
         {
             return true;
         }
-
+        // undocumented custom commands
+        // (a way to test if this "framework even works")
         switch (command)
         {
-            // TODO actual commands
+            case "/ping":
+                await HandlePing(userId);
+                return true;
+            case "/pong":
+                await HandlePong(userId);
+                return true;
             default:
                 return false;
         }
@@ -46,5 +52,15 @@ public class LadderBot : BotBase
     protected override Task HandleInlineQuery(InlineQuery inlineQuery)
     {
         throw new NotImplementedException();
+    }
+
+    private async Task HandlePing(long userId)
+    {
+        await Send(userId, "pong");
+    }
+
+    private async Task HandlePong(long userId)
+    {
+        await Send(userId, "ping");
     }
 }
