@@ -21,22 +21,21 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
     /// <summary>
     /// Shorthand property to query only enabled bots.
     /// </summary>
-    private IEnumerable<BotBase> _activeBots => _bots.Where(b => b.Enabled);
+    private IEnumerable<BotBase> ActiveBots => _bots.Where(b => b.Enabled);
 
     #region IBotManagerService implementation
 
     public BotManagerService(IOptions<ApplicationOptions> options)
     {
-        // TODO fill with bot instances
         _bots = new()
         {
-
+            new LadderBot(options.Value.WebhookUrl, options.Value.LadderBotOptions)
         };
     }
 
     public async Task HandleUpdate(string token, Update update)
     {
-        var bot = _activeBots.SingleOrDefault(b => b.IsToken(token));
+        var bot = ActiveBots.SingleOrDefault(b => b.IsToken(token));
 
         if (bot != null)
         {
@@ -50,7 +49,7 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
 
     public async Task SetWebhooks()
     {
-        foreach (var bot in _activeBots)
+        foreach (var bot in ActiveBots)
         {
             await bot.SetWebhook();
         }
@@ -58,7 +57,7 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
 
     public async Task RemoveWebhooks()
     {
-        foreach (var bot in _activeBots)
+        foreach (var bot in ActiveBots)
         {
             await bot.RemoveWebhook();
         }
