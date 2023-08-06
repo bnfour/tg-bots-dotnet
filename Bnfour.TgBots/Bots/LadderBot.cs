@@ -182,6 +182,7 @@ public class LadderBot : BotBase
     {
         input = input.Replace('\n', ' ').Replace('\r', ' ');
         input = input.Replace("`", "` ");
+        input = input.Trim();
         return input.ToUpper();
     }
 
