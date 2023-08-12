@@ -3,7 +3,7 @@ using Bnfour.TgBots.Options;
 using Bnfour.TgBots.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 
 // we want a single instance serving both interfaces
 // it is a singleton because it has to manage webhooks among other things

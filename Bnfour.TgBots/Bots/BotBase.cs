@@ -126,14 +126,12 @@ public abstract class BotBase
     {
         ThrowIfNotEnabled();
 
-        var allowedUpdateTypes = new[] { UpdateType.Message };
-        if (Inline)
-        {
-            allowedUpdateTypes.Append(UpdateType.InlineQuery);
-        }
-        
+        var allowedUpdateTypes = Inline
+            ? new[] { UpdateType.Message, UpdateType.InlineQuery }
+            : new[] { UpdateType.Message };
+
         await _client!.SetWebhookAsync(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
-        
+
     }
 
     /// <summary>
@@ -269,7 +267,7 @@ public abstract class BotBase
     /// <param name="userId">User that sent the command.</param>
     /// <param name="fullText">Full text of the command, in case arguments matter.</param>
     /// <returns>True if command was found and executed, false otherwise.</returns>
-    protected async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
+    protected virtual async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {
         switch (command)
         {
