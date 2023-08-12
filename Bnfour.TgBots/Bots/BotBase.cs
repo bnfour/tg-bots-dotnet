@@ -24,7 +24,7 @@ public abstract class BotBase
     /// <summary>
     /// URL to be used as webhook endpoint. If null, the bot is considered disabled.
     /// </summary>
-    protected readonly string? _webhookUrl;
+    private readonly string? _webhookUrl;
 
     /// <summary>
     /// Bot's token. Used to verify update origin.
@@ -126,14 +126,12 @@ public abstract class BotBase
     {
         ThrowIfNotEnabled();
 
-        var allowedUpdateTypes = new[] { UpdateType.Message };
-        if (Inline)
-        {
-            allowedUpdateTypes.Append(UpdateType.InlineQuery);
-        }
-        
+        var allowedUpdateTypes = Inline
+            ? new[] { UpdateType.Message, UpdateType.InlineQuery }
+            : new[] { UpdateType.Message };
+
         await _client!.SetWebhookAsync(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
-        
+
     }
 
     /// <summary>
