@@ -141,7 +141,8 @@ public class LadderBot : BotBase
         if (!string.IsNullOrEmpty(inlineQuery.Query) && inlineQuery.Query.Length > 0)
         {
             var results = GenerateResults(inlineQuery.Query);
-            await _client!.AnswerInlineQueryAsync(inlineQuery.Id, results);
+            await _client!.AnswerInlineQueryAsync(inlineQuery.Id, results,
+                cacheTime: 3600, isPersonal: false);
         }
     }
 
