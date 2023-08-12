@@ -1,6 +1,8 @@
+using Bnfour.TgBots.Contexts;
 using Bnfour.TgBots.Interfaces;
 using Bnfour.TgBots.Options;
 using Bnfour.TgBots.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews().AddNewtonsoftJson();
@@ -25,6 +27,8 @@ builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection(
 // file name goes straight after |DataDirectory|, no slashes of any kind
 AppDomain.CurrentDomain.SetData("DataDirectory", AppContext.BaseDirectory);
 
+builder.Services.AddDbContext<CatMacroBotContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("CatMacroBotConnectionString")));
 
 var app = builder.Build();
 
