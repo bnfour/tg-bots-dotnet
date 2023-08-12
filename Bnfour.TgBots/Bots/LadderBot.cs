@@ -14,11 +14,21 @@ namespace Bnfour.TgBots.Bots;
 public class LadderBot : BotBase
 {
     /// <summary>
-    /// Constructor. Does nothing because there are no options unique to this bot.
+    /// Constructor. Sets the index URL for the button images.
     /// </summary>
     /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
     /// <param name="options">Bot-specific options.</param>
-    public LadderBot(string webhookIndex, LadderBotOptions options) : base(webhookIndex, options) { }
+    public LadderBot(string webhookIndex, LadderBotOptions options) : base(webhookIndex, options)
+    {
+        _webIndex = webhookIndex;
+    }
+
+    /// <summary>
+    /// Base url for the images for the generated inline responses.
+    /// Matches the global index, relative image URLs are appended.
+    /// See <see cref="SpacesThumbUrl"/> and <see cref="NoSpacesThumbUrl"/>.
+    /// </summary>
+    private readonly string _webIndex;
 
     protected override bool Inline => true;
 
@@ -158,14 +168,14 @@ public class LadderBot : BotBase
             new InlineQueryResultArticle(Guid.NewGuid().ToString(), SpacesTitle, spacesContent)
             {
                 Description = SpacesDescription,
-                ThumbnailUrl = _webhookUrl!.TrimEnd('/') + SpacesThumbUrl,
+                ThumbnailUrl = _webIndex.TrimEnd('/') + SpacesThumbUrl,
                 ThumbnailHeight = ThumbSize,
                 ThumbnailWidth = ThumbSize
             },
             new InlineQueryResultArticle(Guid.NewGuid().ToString(), NoSpacesTitle, noSpacesContent)
             {
                 Description = NoSpacesDescription,
-                ThumbnailUrl = _webhookUrl!.TrimEnd('/') + NoSpacesThumbUrl,
+                ThumbnailUrl = _webIndex.TrimEnd('/') + NoSpacesThumbUrl,
                 ThumbnailHeight = ThumbSize,
                 ThumbnailWidth = ThumbSize
             }
@@ -198,7 +208,8 @@ public class LadderBot : BotBase
 
         var builder = new StringBuilder("```");
         builder.AppendLine();
-        builder.AppendLine(string.Join(' ', array));
+        var firstLine = withSpaces ? string.Join(' ', array) : text;
+        builder.AppendLine(firstLine);
         for (int i = 1; i < array.Length; i++)
         {
             var c = array[i];
