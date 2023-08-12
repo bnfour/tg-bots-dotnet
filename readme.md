@@ -40,8 +40,21 @@ X        X
 T         T
 ```
 
-## TODO Cat macro bot
-Probably going to change to allow media other than images and maybe some other features.
+## Cat macro bot
+Inline bot that can be used to post pictures searchable by defined captions. I use it to store and post cat pictures I used to spam before I moved to Telegram and started spamming stickers.
+
+### Usage
+This bot isn't strictly inline: administrator accounts can manage pictures via chatting:
+- Sending a captioned photo will add that photo and make it searchable by provided caption.
+- `/delete caption` instructs bot to delete the image by caption, if it exists.
+
+This mimics behavior of the Python version.
+
+### New version
+TODO after this is online, redo the bot to:
+- allow media other than images, searchable by type
+- make media collections per user, accessible only by the user
+- make registration limited similar to dotnet-telegram-forwarder
 
 ## TODO Configuration and deployment
 Similar to dotnet-telegram-forwarder, I guess.
