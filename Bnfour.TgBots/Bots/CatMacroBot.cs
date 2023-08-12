@@ -46,7 +46,7 @@ public class CatMacroBot : BotBase
     """.ToMarkdownV2()
     +
     """
-    **Important note:** there are plans to completely redo this bot to make _media_ collections per user, rather than single global one\. Stay tuned\. Or not\.
+    **Important note:** there are plans to completely redo this bot to make _media_ collections per user, rather than single global _image_ collection\. Stay tuned\. Or not\.
     """;
 
     protected override string StartResponse => """
@@ -55,8 +55,20 @@ public class CatMacroBot : BotBase
     I'm an inline bot, so feel free to summon me in other chats to post cat-related images.
     """.ToMarkdownV2();
 
-    protected override Task HandleInlineQuery(InlineQuery inlineQuery)
+    protected override async Task HandleInlineQuery(InlineQuery inlineQuery)
     {
         throw new NotImplementedException();
     }
+
+    protected override async Task HandlePhoto(Message message)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Checks whether the provided Telegram user ID is configured as the bot admin.
+    /// </summary>
+    /// <param name="id">ID to check.</param>
+    /// <returns>True if the user is an admin, false otherwise.</returns>
+    private bool IsAdmin(long id) => _admins.Contains(id);
 }
