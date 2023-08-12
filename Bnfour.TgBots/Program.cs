@@ -18,6 +18,14 @@ builder.Services.AddSingleton<IBotInfoProviderService>(s => s.GetService<BotMana
 
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Options"));
 
+// this is used to force the code to use database from the current (e.g output for debug) directory
+// instead of using the file in the project root every launch
+
+// please note that this value ends with backslash, so in the connection string,
+// file name goes straight after |DataDirectory|, no slashes of any kind
+AppDomain.CurrentDomain.SetData("DataDirectory", AppContext.BaseDirectory);
+
+
 var app = builder.Build();
 
 app.UseStaticFiles();
