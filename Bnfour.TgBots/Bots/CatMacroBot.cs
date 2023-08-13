@@ -9,7 +9,7 @@ using Telegram.Bot.Types;
 namespace Bnfour.TgBots.Bots;
 
 /// <summary>
-/// Bot that stores a collectionof images searchable by their captions.
+/// Bot that stores a collection of images searchable by their captions.
 /// </summary>
 public class CatMacroBot : BotBase
 {
@@ -95,6 +95,13 @@ public class CatMacroBot : BotBase
         }
     }
 
+    /// <summary>
+    /// Adds the image from the message to the database.
+    /// This method does not check whether the sender has rights to add images,
+    /// it needs to be done by the caller beforehand.
+    /// </summary>
+    /// <param name="message">Message with the image to add.</param>
+    /// <exception cref="NoRequiredDataException">Thrown when there is no image IDs present.</exception>
     private async Task AddImage(Message message)
     {
         var fromId = message.From!.Id;
@@ -146,6 +153,14 @@ public class CatMacroBot : BotBase
         """.ToMarkdownV2());
     }
 
+    /// <summary>
+    /// Tries to find and remove the image sent. If successful, exits deletion mode.
+    /// Otherwise, prompts the user to try again.
+    /// This method does not check whether the sender has rights to add images,
+    /// it needs to be done by the caller beforehand.
+    /// </summary>
+    /// <param name="message">Message with the image to add.</param>
+    /// <exception cref="NoRequiredDataException">Thrown when there is no image IDs present.</exception>
     private async Task RemoveImage(Message message)
     {
         var fromId = message.From!.Id;
@@ -203,6 +218,11 @@ public class CatMacroBot : BotBase
         return false;
     }
 
+    /// <summary>
+    /// Handles the /delet* command. Switches the user to deletion mode,
+    /// or reminds them it's already enabled.
+    /// </summary>
+    /// <param name="userId">ID of the user who sent the command to reply to.</param>
     private async Task HandleDelete(long userId)
     {
         if (_adminStatus[userId] == CatMacroBotAdminStatus.Deletion)
@@ -216,6 +236,11 @@ public class CatMacroBot : BotBase
         }
     }
 
+    /// <summary>
+    /// Handles the /cancel command. Switches the user to normal mode,
+    /// or reminds them it's already enabled.
+    /// </summary>
+    /// <param name="userId">ID of the user who sent the command to reply to.</param>
     private async Task HandleCancel(long userId)
     {
         if (_adminStatus[userId] == CatMacroBotAdminStatus.Normal)
