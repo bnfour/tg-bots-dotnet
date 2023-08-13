@@ -1,5 +1,6 @@
 using Bnfour.TgBots.Contexts;
 using Bnfour.TgBots.Entities;
+using Bnfour.TgBots.Enums;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
 using Bnfour.TgBots.Options.BotOptions;
@@ -22,7 +23,13 @@ public class CatMacroBot : BotBase
         : base(webhookIndex, options)
     {
         _context = context;
-        _admins = options.Admins ?? new List<long>();
+        
+        var admins = options.Admins ?? new List<long>();
+        _adminStatus = new();
+        foreach (var admin in admins)
+        {
+            _adminStatus[admin] = CatMacroBotAdminStatus.Normal;
+        }
     }
 
     /// <summary>
@@ -30,10 +37,12 @@ public class CatMacroBot : BotBase
     /// </summary>
     private readonly CatMacroBotContext _context;
 
+    // TODO move this to database 
+    // so this can be stored outside of a singleton
     /// <summary>
-    /// List of admins able to modify the database.
+    /// Currently enabled mode per admin account.
     /// </summary>
-    private readonly List<long> _admins;
+    private readonly Dictionary<long, CatMacroBotAdminStatus> _adminStatus;
 
     protected override bool Inline => true;
 
@@ -76,7 +85,14 @@ public class CatMacroBot : BotBase
             throw new NoRequiredDataException("Message.Photo");
         }
 
-        await AddImage(message);
+        if (_adminStatus[fromId] == CatMacroBotAdminStatus.Normal)
+        {
+            await AddImage(message);
+        }
+        else if (_adminStatus[fromId] == CatMacroBotAdminStatus.Deletion)
+        {
+            // TODO delete
+        }
     }
 
     private async Task AddImage(Message message)
@@ -135,5 +151,5 @@ public class CatMacroBot : BotBase
     /// </summary>
     /// <param name="id">ID to check.</param>
     /// <returns>True if the user is an admin, false otherwise.</returns>
-    private bool IsAdmin(long id) => _admins.Contains(id);
+    private bool IsAdmin(long id) => _adminStatus.ContainsKey(id);
 }
