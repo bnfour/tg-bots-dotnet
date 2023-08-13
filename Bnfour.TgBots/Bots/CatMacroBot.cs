@@ -1,5 +1,6 @@
 using Bnfour.TgBots.Contexts;
 using Bnfour.TgBots.Entities;
+using Bnfour.TgBots.Enums;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
 using Bnfour.TgBots.Options.BotOptions;
@@ -22,7 +23,13 @@ public class CatMacroBot : BotBase
         : base(webhookIndex, options)
     {
         _context = context;
-        _admins = options.Admins ?? new List<long>();
+        
+        var admins = options.Admins ?? new List<long>();
+        _adminStatus = new();
+        foreach (var admin in admins)
+        {
+            _adminStatus[admin] = CatMacroBotAdminStatus.Normal;
+        }
     }
 
     /// <summary>
@@ -30,10 +37,12 @@ public class CatMacroBot : BotBase
     /// </summary>
     private readonly CatMacroBotContext _context;
 
+    // TODO move this to database 
+    // so this can be stored outside of a singleton
     /// <summary>
-    /// List of admins able to modify the database.
+    /// Currently enabled mode per admin account.
     /// </summary>
-    private readonly List<long> _admins;
+    private readonly Dictionary<long, CatMacroBotAdminStatus> _adminStatus;
 
     protected override bool Inline => true;
 
@@ -76,7 +85,14 @@ public class CatMacroBot : BotBase
             throw new NoRequiredDataException("Message.Photo");
         }
 
-        await AddImage(message);
+        if (_adminStatus[fromId] == CatMacroBotAdminStatus.Normal)
+        {
+            await AddImage(message);
+        }
+        else if (_adminStatus[fromId] == CatMacroBotAdminStatus.Deletion)
+        {
+            await RemoveImage(message);
+        }
     }
 
     private async Task AddImage(Message message)
@@ -130,10 +146,86 @@ public class CatMacroBot : BotBase
         """.ToMarkdownV2());
     }
 
+    private async Task RemoveImage(Message message)
+    {
+        var fromId = message.From!.Id;
+
+        var photoSize = message.Photo!.Last();
+        var fileUniqueId = photoSize.FileUniqueId;
+
+        if (string.IsNullOrEmpty(fileUniqueId))
+        {
+            throw new NoRequiredDataException("Message.Photo.FileUniqueId");
+        }
+
+        var toRemove = _context.Images.SingleOrDefault(i => i.FileUniqueId == fileUniqueId);
+
+        if (toRemove == null)
+        {
+            await Send(fromId, "Error! Image not found! Try again?".ToMarkdownV2());
+            return;
+        }
+
+        _context.Remove(toRemove);
+        await _context.SaveChangesAsync();
+        
+        _adminStatus[fromId] = CatMacroBotAdminStatus.Normal;
+
+        await Send(fromId, "Removal OK! ('-^)b".ToMarkdownV2());
+    }
+
     /// <summary>
     /// Checks whether the provided Telegram user ID is configured as the bot admin.
     /// </summary>
     /// <param name="id">ID to check.</param>
     /// <returns>True if the user is an admin, false otherwise.</returns>
-    private bool IsAdmin(long id) => _admins.Contains(id);
+    private bool IsAdmin(long id) => _adminStatus.ContainsKey(id);
+
+    protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
+    {
+        var handledByBase = await base.TryToFindAndRunCommand(command, userId, fullText);
+        if (handledByBase)
+        {
+            return true;
+        }
+        // as with previous versions, anything like /delet, /delete, /delet_this
+        // or even /delete_this_please_i_beg_of_you works
+        if (command.StartsWith("/delet"))
+        {
+            await HandleDelete(userId);
+            return true;
+        }
+        else if (command == "/cancel")
+        {
+            await HandleCancel(userId);
+            return true;
+        }
+        return false;
+    }
+
+    private async Task HandleDelete(long userId)
+    {
+        if (_adminStatus[userId] == CatMacroBotAdminStatus.Deletion)
+        {
+            await Send(userId, "You're already in deletion mode!".ToMarkdownV2());
+        }
+        else
+        {
+            _adminStatus[userId] = CatMacroBotAdminStatus.Deletion;
+            await Send(userId, "Deletion mode activated! Forward or query the image you want to remove, or /cancel".ToMarkdownV2());
+        }
+    }
+
+    private async Task HandleCancel(long userId)
+    {
+        if (_adminStatus[userId] == CatMacroBotAdminStatus.Normal)
+        {
+            await Send(userId, "You've nothing to cancel!".ToMarkdownV2());
+        }
+        else
+        {
+            _adminStatus[userId] = CatMacroBotAdminStatus.Normal;
+            await Send(userId, "Deletion mode cancelled! Image adding mode active!".ToMarkdownV2());
+        }
+    }
 }
