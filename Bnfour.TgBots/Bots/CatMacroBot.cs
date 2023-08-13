@@ -1,4 +1,6 @@
 using Bnfour.TgBots.Contexts;
+using Bnfour.TgBots.Entities;
+using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
 using Bnfour.TgBots.Options.BotOptions;
 using Telegram.Bot.Types;
@@ -62,8 +64,70 @@ public class CatMacroBot : BotBase
 
     protected override async Task HandlePhoto(Message message)
     {
-        var id = message.From!.Id;
-        await Send(id, IsAdmin(id) ? "ok dude" : "not ok dude");
+        var fromId = message.From!.Id;
+        if (!IsAdmin(fromId))
+        {
+            await Send(fromId, "Access denied!".ToMarkdownV2());
+            return;
+        }
+        // check if there is actually image data provided
+        if (message.Photo == null || message.Photo.Length < 1)
+        {
+            throw new NoRequiredDataException("Message.Photo");
+        }
+
+        await AddImage(message);
+    }
+
+    private async Task AddImage(Message message)
+    {
+        var fromId = message.From!.Id;
+        
+        // get the ids from the last Photo
+        // (native version of the image and not the thumbnail)
+        var photoSize = message.Photo!.Last();
+        var fileId = photoSize.FileId;
+        var fileUniqueId = photoSize.FileUniqueId;
+
+        if (string.IsNullOrEmpty(fileId) || string.IsNullOrEmpty(fileUniqueId))
+        {
+            throw new NoRequiredDataException("Message.Photo.FileId and/or Message.Photo.FileUniqueId");
+        }
+        // duplicate checks
+        if (_context.Images.Any(i => i.FileUniqueId == fileUniqueId))
+        {
+            var existingCaption = _context.Images.First(i => i.FileUniqueId == fileUniqueId).Caption;
+            await Send(fromId, $"Error: duplicate image! Already saved as \"{existingCaption}\"".ToMarkdownV2());
+            return;
+        }
+        if (string.IsNullOrEmpty(message.Caption))
+        {
+            await Send(fromId, "Please provide a caption!".ToMarkdownV2());
+            return;
+        }
+        if (_context.Images.Any(i => i.Caption == message.Caption))
+        {
+            await Send(fromId, $"Error: duplicate caption \"{message.Caption}\"!".ToMarkdownV2());
+            return;
+        }
+
+        // if all the checks were passed, actually add a new image
+        var newMacro = new CatMacro()
+        {
+            Caption = message.Caption,
+            FileId = fileId,
+            FileUniqueId = fileUniqueId
+        };
+
+        await _context.Images.AddAsync(newMacro);
+        await _context.SaveChangesAsync();
+        // TODO remove some data from the response?
+        await Send(fromId, $"""
+        OK! ('-^)b
+        Guid: {newMacro.Id}
+        FileId: {newMacro.FileId}
+        FileUniqueId: {newMacro.FileUniqueId}
+        """.ToMarkdownV2());
     }
 
     /// <summary>

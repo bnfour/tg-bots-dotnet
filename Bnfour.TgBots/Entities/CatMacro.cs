@@ -8,7 +8,7 @@ public class CatMacro
     /// <summary>
     /// Primary key.
     /// </summary>
-    public required Guid Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Caption, under which the image is searchable.
