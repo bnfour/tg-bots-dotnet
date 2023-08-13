@@ -205,16 +205,17 @@ public class CatMacroBot : BotBase
         }
         // as with previous versions, anything like /delet, /delete, /delet_this
         // or even /delete_this_please_i_beg_of_you works
-        if (command.StartsWith("/delet"))
+        if (IsAdmin(userId) && command.StartsWith("/delet"))
         {
             await HandleDelete(userId);
             return true;
         }
-        else if (command == "/cancel")
+        else if (IsAdmin(userId) && command == "/cancel")
         {
             await HandleCancel(userId);
             return true;
         }
+        // TODO not ghost non-admins by telling them that a perfectly valid command we just parsed does not exist?
         return false;
     }
 
