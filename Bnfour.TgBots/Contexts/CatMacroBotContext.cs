@@ -30,9 +30,14 @@ public class CatMacroBotContext : DbContext
             .HasIndex(cm => cm.Caption).IsUnique();
 
         modelBuilder.Entity<CatMacro>()
-            .Property(cm => cm.MediaId).IsRequired();
+            .Property(cm => cm.FileId).IsRequired();
         modelBuilder.Entity<CatMacro>()
-            .HasIndex(cm => cm.MediaId).IsUnique();
+            .HasIndex(cm => cm.FileId).IsUnique();
+
+        modelBuilder.Entity<CatMacro>()
+            .Property(cm => cm.FileUniqueId).IsRequired();
+        modelBuilder.Entity<CatMacro>()
+            .HasIndex(cm => cm.FileUniqueId).IsUnique();
     }
 }
 
