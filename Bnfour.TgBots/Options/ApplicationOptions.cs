@@ -17,4 +17,9 @@ public class ApplicationOptions
     /// Options for the ladder bot.
     /// </summary>
     public required LadderBotOptions LadderBotOptions { get; set; }
+
+    /// <summary>
+    /// Options for the cat macro bot.
+    /// </summary>
+    public required CatMacroBotOptions CatMacroBotOptions { get; set; }
 }

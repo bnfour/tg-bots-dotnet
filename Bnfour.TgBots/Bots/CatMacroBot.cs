@@ -62,7 +62,8 @@ public class CatMacroBot : BotBase
 
     protected override async Task HandlePhoto(Message message)
     {
-        throw new NotImplementedException();
+        var id = message.From!.Id;
+        await Send(id, IsAdmin(id) ? "ok dude" : "not ok dude");
     }
 
     /// <summary>
