@@ -91,7 +91,7 @@ public class CatMacroBot : BotBase
         }
         else if (_adminStatus[fromId] == CatMacroBotAdminStatus.Deletion)
         {
-            // TODO delete
+            await RemoveImage(message);
         }
     }
 
@@ -144,6 +144,34 @@ public class CatMacroBot : BotBase
         FileId: {newMacro.FileId}
         FileUniqueId: {newMacro.FileUniqueId}
         """.ToMarkdownV2());
+    }
+
+    private async Task RemoveImage(Message message)
+    {
+        var fromId = message.From!.Id;
+
+        var photoSize = message.Photo!.Last();
+        var fileUniqueId = photoSize.FileUniqueId;
+
+        if (string.IsNullOrEmpty(fileUniqueId))
+        {
+            throw new NoRequiredDataException("Message.Photo.FileUniqueId");
+        }
+
+        var toRemove = _context.Images.SingleOrDefault(i => i.FileUniqueId == fileUniqueId);
+
+        if (toRemove == null)
+        {
+            await Send(fromId, "Error! Image not found! Try again?".ToMarkdownV2());
+            return;
+        }
+
+        _context.Remove(toRemove);
+        await _context.SaveChangesAsync();
+        
+        _adminStatus[fromId] = CatMacroBotAdminStatus.Normal;
+
+        await Send(fromId, "Removal OK! ('-^)b".ToMarkdownV2());
     }
 
     /// <summary>
