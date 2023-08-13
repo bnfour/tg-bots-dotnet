@@ -180,4 +180,52 @@ public class CatMacroBot : BotBase
     /// <param name="id">ID to check.</param>
     /// <returns>True if the user is an admin, false otherwise.</returns>
     private bool IsAdmin(long id) => _adminStatus.ContainsKey(id);
+
+    protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
+    {
+        var handledByBase = await base.TryToFindAndRunCommand(command, userId, fullText);
+        if (handledByBase)
+        {
+            return true;
+        }
+        // as with previous versions, anything like /delet, /delete, /delet_this
+        // or even /delete_this_please_i_beg_of_you works
+        if (command.StartsWith("/delet"))
+        {
+            await HandleDelete(userId);
+            return true;
+        }
+        else if (command == "/cancel")
+        {
+            await HandleCancel(userId);
+            return true;
+        }
+        return false;
+    }
+
+    private async Task HandleDelete(long userId)
+    {
+        if (_adminStatus[userId] == CatMacroBotAdminStatus.Deletion)
+        {
+            await Send(userId, "You're already in deletion mode!".ToMarkdownV2());
+        }
+        else
+        {
+            _adminStatus[userId] = CatMacroBotAdminStatus.Deletion;
+            await Send(userId, "Deletion mode activated! Forward or query the image you want to remove, or /cancel".ToMarkdownV2());
+        }
+    }
+
+    private async Task HandleCancel(long userId)
+    {
+        if (_adminStatus[userId] == CatMacroBotAdminStatus.Normal)
+        {
+            await Send(userId, "You've nothing to cancel!".ToMarkdownV2());
+        }
+        else
+        {
+            _adminStatus[userId] = CatMacroBotAdminStatus.Normal;
+            await Send(userId, "Deletion mode cancelled! Image adding mode active!".ToMarkdownV2());
+        }
+    }
 }
