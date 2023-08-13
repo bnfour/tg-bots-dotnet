@@ -3,6 +3,7 @@ using System;
 using Bnfour.TgBots.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bnfour.TgBots.Migrations
 {
     [DbContext(typeof(CatMacroBotContext))]
-    partial class CatMacroBotContextModelSnapshot : ModelSnapshot
+    [Migration("20230813111105_FileIdFields")]
+    partial class FileIdFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.10");

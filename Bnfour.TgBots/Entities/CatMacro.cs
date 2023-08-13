@@ -15,8 +15,18 @@ public class CatMacro
     /// </summary>
     public required string Caption { get; set; }
 
+    // see https://core.telegram.org/bots/api#photosize
+
     /// <summary>
-    /// Media ID of the image.
+    /// "file_id" of the image. Used to generate inline replies.
+    /// Is not stable and changes in every new message with the same image,
+    /// but is _the_ way to download or reuse the image.
     /// </summary>
-    public required string MediaId { get; set; }
+    public required string FileId { get; set; }
+
+    /// <summary>
+    /// "file_unique_id" of the image. Used to identify the images sent to the bot
+    /// for deletion.
+    /// </summary>
+    public required string FileUniqueId { get; set; }
 }
