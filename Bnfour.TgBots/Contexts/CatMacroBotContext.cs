@@ -11,7 +11,7 @@ public class CatMacroBotContext : DbContext
     /// <summary>
     /// The database set.
     /// </summary>
-    public required DbSet<CatMacro> Images;
+    public required DbSet<CatMacro> Images { get; set; }
 
     public CatMacroBotContext(DbContextOptions<CatMacroBotContext> options) : base(options) { }
 

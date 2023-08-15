@@ -1,4 +1,5 @@
 using Bnfour.TgBots.Bots;
+using Bnfour.TgBots.Contexts;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Interfaces;
 using Bnfour.TgBots.Models;
@@ -25,11 +26,13 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
 
     #region IBotManagerService implementation
 
-    public BotManagerService(IOptions<ApplicationOptions> options)
+    public BotManagerService(IOptions<ApplicationOptions> options,
+        CatMacroBotContext catMacroBotContext)
     {
         _bots = new()
         {
-            new LadderBot(options.Value.WebhookUrl, options.Value.LadderBotOptions)
+            new LadderBot(options.Value.WebhookUrl, options.Value.LadderBotOptions),
+            new CatMacroBot(options.Value.WebhookUrl, options.Value.CatMacroBotOptions, catMacroBotContext)
         };
     }
 
