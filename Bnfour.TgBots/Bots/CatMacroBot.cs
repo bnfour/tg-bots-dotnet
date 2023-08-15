@@ -4,7 +4,10 @@ using Bnfour.TgBots.Enums;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
 using Bnfour.TgBots.Options.BotOptions;
+
+using Telegram.Bot;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InlineQueryResults;
 
 namespace Bnfour.TgBots.Bots;
 
@@ -31,6 +34,19 @@ public class CatMacroBot : BotBase
             _adminStatus[admin] = CatMacroBotAdminStatus.Normal;
         }
     }
+
+    // taken straight from Python version
+    // TODO consider make these configurable
+
+    /// <summary>
+    /// Maximum amount of images to return per query.
+    /// </summary>
+    private const int MaxResults = 7;
+
+    /// <summary>
+    /// Threshold for string matcher. Empirically set to provide "acceptable" results on my data.
+    /// </summary>
+    private const int SimilarityCutoff = 50;
 
     /// <summary>
     /// Database context to use.
@@ -68,7 +84,38 @@ public class CatMacroBot : BotBase
 
     protected override async Task HandleInlineQuery(InlineQuery inlineQuery)
     {
-        throw new NotImplementedException();
+        // skips queries shorter than 3 characters
+        // Telegram sends an empty query, so a bot can return default results,
+        // but this bot is search only (for now?)
+        if (!string.IsNullOrEmpty(inlineQuery.Query) && inlineQuery.Query.Length >= 3)
+        {
+            var results = GenerateResults(inlineQuery.Query);
+            // TODO don't forget to update caching after the rewrite
+            await _client!.AnswerInlineQueryAsync(inlineQuery.Id, results,
+                cacheTime: 360, isPersonal: false);
+        }
+    }
+
+    /// <summary>
+    /// Generates the search results from the saved image database.
+    /// </summary>
+    /// <param name="input">String to query images by.</param>
+    /// <returns>Up to <see cref="MaxResults"/> most matching results.</returns>
+    private IEnumerable<InlineQueryResult> GenerateResults(string input)
+    {
+        // i tried to avoid materializing full image data in this method
+
+        var captions = _context.Images.Select(i => i.Caption);
+
+        // processing string to itself `(s) => s` is needed to support non-English characters,
+        // as the default processor replaces anything matching [^ a-zA-Z0-9] with whitespaces
+        var searchResults = FuzzySharp.Process.ExtractTop(input, captions, (s) => s,
+            limit: MaxResults, cutoff: SimilarityCutoff)
+            .Select(sr => sr.Value);
+
+        return _context.Images
+            .Where(i => searchResults.Contains(i.Caption))
+            .Select(i => new InlineQueryResultCachedPhoto(i.Id.ToString(), i.FileId));
     }
 
     protected override async Task HandlePhoto(Message message)
