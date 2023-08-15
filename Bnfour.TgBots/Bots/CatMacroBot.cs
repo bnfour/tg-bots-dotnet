@@ -172,7 +172,11 @@ public class CatMacroBot : BotBase
         }
         if (string.IsNullOrEmpty(message.Caption))
         {
-            await Send(fromId, "Please provide a caption!".ToMarkdownV2());
+            var adviceFriend = string.IsNullOrEmpty(message.MediaGroupId)
+                ? string.Empty
+                : "\nProtip: send one image at a time.";
+
+            await Send(fromId, ("Please provide a caption!" + adviceFriend).ToMarkdownV2());
             return;
         }
         if (_context.Images.Any(i => i.Caption == message.Caption))
