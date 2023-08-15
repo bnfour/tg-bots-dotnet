@@ -195,13 +195,7 @@ public class CatMacroBot : BotBase
 
         await _context.Images.AddAsync(newMacro);
         await _context.SaveChangesAsync();
-        // TODO remove some data from the response?
-        await Send(fromId, $"""
-        OK! ('-^)b
-        Guid: {newMacro.Id}
-        FileId: {newMacro.FileId}
-        FileUniqueId: {newMacro.FileUniqueId}
-        """.ToMarkdownV2());
+        await Send(fromId, "OK! ('-^)b".ToMarkdownV2());
     }
 
     /// <summary>
