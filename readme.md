@@ -5,9 +5,6 @@ Initially a port and/or an upgrade of an earlier [Python version](https://github
 
 There's also a very simple status page that shows links to active bots.
 
-### Why rewrite?
-TODO maybe include this section if I'll be able to formulate it clearly.
-
 ## Ladder bot
 Inline bot that generates texts running along horizontal, vertical and diagonal directions simultaneously for extra expressiveness.
 
