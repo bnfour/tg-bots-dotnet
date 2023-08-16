@@ -146,7 +146,7 @@ public abstract class BotBase
 
     #endregion
 
-    #region  message handling
+    #region message handling
 
     /// <summary>
     /// Sends a message, formated in MarkdownV2. See https://core.telegram.org/bots/api#markdownv2-style
@@ -208,6 +208,9 @@ public abstract class BotBase
             case MessageType.Text:
                 await HandleText(message);
                 break;
+            case MessageType.Photo:
+                await HandlePhoto(message);
+                break;
             // TODO other message types
             // all unsupported types are treated as an unrecognized text
             default:
@@ -215,6 +218,8 @@ public abstract class BotBase
                 break;
         }
     }
+
+    #endregion
 
     /// <summary>
     /// Handles an inline query, if the bot is designated as an inline bot.
@@ -224,12 +229,24 @@ public abstract class BotBase
     protected abstract Task HandleInlineQuery(InlineQuery inlineQuery);
 
     /// <summary>
+    /// Handles images sent to the bot. Base implementation treats these as unrecognized text.
+    /// Descendants may override to do useful processing.
+    /// </summary>
+    /// <param name="message">Message with images.</param>
+    protected virtual async Task HandlePhoto(Message message)
+    {
+        await ReplyToArbitaryText(message.From!.Id);
+    }
+
+    #region text and commands handling
+
+    /// <summary>
     /// Handles text message.
     /// </summary>
     /// <param name="message">Message to process. Should be of <see cref="Message.Text"/> type and contain text.</param>
     protected async Task HandleText(Message message)
     {
-        var text = message.Text ?? String.Empty;
+        var text = message.Text ?? string.Empty;
 
         if (text.StartsWith("/"))
         {

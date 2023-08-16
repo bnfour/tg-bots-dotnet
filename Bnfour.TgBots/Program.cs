@@ -1,6 +1,8 @@
+using Bnfour.TgBots.Contexts;
 using Bnfour.TgBots.Interfaces;
 using Bnfour.TgBots.Options;
 using Bnfour.TgBots.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews().AddNewtonsoftJson();
@@ -17,6 +19,24 @@ builder.Services.AddSingleton<IBotManagerService>(s => s.GetService<BotManagerSe
 builder.Services.AddSingleton<IBotInfoProviderService>(s => s.GetService<BotManagerService>()!);
 
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Options"));
+
+// this is used to force the code to use database from the current (e.g output for debug) directory
+// instead of using the file in the project root every launch
+
+// please note that this value ends with backslash, so in the connection string,
+// file name goes straight after |DataDirectory|, no slashes of any kind
+AppDomain.CurrentDomain.SetData("DataDirectory", AppContext.BaseDirectory);
+
+// TODO move away from singletons everywhere?
+// probably move bots TelegramBotClient instances to a singleton
+// that manages the webhooks and holds the instances to use in other services,
+// which may be made scoped then (are they?)
+
+// or just yolo and make evertything scoped, starting from BotManagerService
+// and see what happens
+builder.Services.AddDbContext<CatMacroBotContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("CatMacroBotConnectionString")),
+    ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
 var app = builder.Build();
 
