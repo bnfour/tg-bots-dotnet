@@ -24,8 +24,11 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
     /// </summary>
     private IEnumerable<BotBase> ActiveBots => _bots.Where(b => b.Enabled);
 
-    #region IBotManagerService implementation
-
+    /// <summary>
+    /// Constructor that defines the list of bots available.
+    /// </summary>
+    /// <param name="options">Application options to pass to bots.</param>
+    /// <param name="catMacroBotContext">DB context for cat macro bot.</param>
     public BotManagerService(IOptions<ApplicationOptions> options,
         CatMacroBotContext catMacroBotContext)
     {
@@ -35,6 +38,8 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
             new CatMacroBot(options.Value.WebhookUrl, options.Value.CatMacroBotOptions, catMacroBotContext)
         };
     }
+
+    #region IBotManagerService implementation
 
     public async Task HandleUpdate(string token, Update update)
     {

@@ -32,8 +32,6 @@ AppDomain.CurrentDomain.SetData("DataDirectory", AppContext.BaseDirectory);
 // that manages the webhooks and holds the instances to use in other services,
 // which may be made scoped then (are they?)
 
-// or just yolo and make evertything scoped, starting from BotManagerService
-// and see what happens
 builder.Services.AddDbContext<CatMacroBotContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CatMacroBotConnectionString")),
     ServiceLifetime.Singleton, ServiceLifetime.Singleton);

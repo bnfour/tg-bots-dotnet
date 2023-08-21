@@ -23,7 +23,7 @@ public class CatMacroBotContext : DbContext
             .ToTable("CatMacros")
             .HasKey(cm => cm.Id);
 
-        // set other field as required and unique
+        // set other fields as required and unique
         modelBuilder.Entity<CatMacro>()
             .Property(cm => cm.Caption).IsRequired();
         modelBuilder.Entity<CatMacro>()
@@ -40,4 +40,3 @@ public class CatMacroBotContext : DbContext
             .HasIndex(cm => cm.FileUniqueId).IsUnique();
     }
 }
-
