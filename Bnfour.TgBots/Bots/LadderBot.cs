@@ -14,21 +14,13 @@ namespace Bnfour.TgBots.Bots;
 public class LadderBot : BotBase
 {
     /// <summary>
-    /// Constructor. Sets the index URL for the button images.
-    /// </summary>
-    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
-    /// <param name="options">Bot-specific options.</param>
-    public LadderBot(string webhookIndex, LadderBotOptions options) : base(webhookIndex, options)
-    {
-        _webIndex = webhookIndex;
-    }
-
-    /// <summary>
     /// Base url for the images for the generated inline responses.
     /// Matches the global index, relative image URLs are appended.
     /// See <see cref="SpacesThumbUrl"/> and <see cref="NoSpacesThumbUrl"/>.
     /// </summary>
     private readonly string _webIndex;
+
+    #region configuration
 
     protected override bool Inline => true;
 
@@ -75,6 +67,8 @@ public class LadderBot : BotBase
     I'm an inline bot, so feel free to summon me in other chats to get prompts for ladder-like texts.
     """.ToMarkdownV2();
 
+    #endregion
+
     #region constants for generated results
 
     /// <summary>
@@ -113,6 +107,16 @@ public class LadderBot : BotBase
     private const int ThumbSize = 128;
 
     #endregion
+
+    /// <summary>
+    /// Constructor. Sets the index URL for the button images.
+    /// </summary>
+    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
+    /// <param name="options">Bot-specific options.</param>
+    public LadderBot(string webhookIndex, LadderBotOptions options) : base(webhookIndex, options)
+    {
+        _webIndex = webhookIndex;
+    }
 
     protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {

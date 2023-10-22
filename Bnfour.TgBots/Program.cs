@@ -5,6 +5,7 @@ using Bnfour.TgBots.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+// we need to explicitly add NewtonsoftJson to parse webhook payloads
 builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 
 // we want a single instance serving both interfaces
@@ -12,7 +13,7 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 // this is not an ideal solution, as it's now possible to inject and use the BotManagerService directly
 // and not via intended separated interfaces, but i really wanted the interfaces separated
 // of course, it's also possible to split BotManagerService to two classes serving a common bot list,
-// but i can't be bothered to to that ¯\_(ツ)_/¯
+// but i can't be bothered to to that for now ¯\_(ツ)_/¯
 builder.Services.AddSingleton<BotManagerService>();
 
 builder.Services.AddSingleton<IBotManagerService>(s => s.GetService<BotManagerService>()!);

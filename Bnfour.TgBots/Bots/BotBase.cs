@@ -387,7 +387,7 @@ public abstract class BotBase
     /// </summary>
     /// <returns>The version as a string ready to be put to bot's response,
     /// with MarkdownV2 formatting and everything.</returns>
-    private string GetVersion()
+    private static string GetVersion()
     {
         var version = Assembly.GetExecutingAssembly().GetName().Version;
         // dot is escaped for tg's markdown
