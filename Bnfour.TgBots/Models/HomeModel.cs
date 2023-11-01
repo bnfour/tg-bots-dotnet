@@ -4,5 +4,9 @@ namespace Bnfour.TgBots.Models;
 /// </summary>
 public class HomeModel
 {
+    /// <summary>
+    /// List of data models of every bot present in the app,
+    /// whether or not it's set as an active bot.
+    /// </summary>
     public required IEnumerable<BotInfoModel> Bots { get; set; }
 }

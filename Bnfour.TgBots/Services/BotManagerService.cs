@@ -24,8 +24,11 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
     /// </summary>
     private IEnumerable<BotBase> ActiveBots => _bots.Where(b => b.Enabled);
 
-    #region IBotManagerService implementation
-
+    /// <summary>
+    /// Constructor that defines the list of bots available.
+    /// </summary>
+    /// <param name="options">Application options to pass to bots.</param>
+    /// <param name="catMacroBotContext">DB context for cat macro bot.</param>
     public BotManagerService(IOptions<ApplicationOptions> options,
         CatMacroBotContext catMacroBotContext)
     {
@@ -35,6 +38,8 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
             new CatMacroBot(options.Value.WebhookUrl, options.Value.CatMacroBotOptions, catMacroBotContext)
         };
     }
+
+    #region IBotManagerService implementation
 
     public async Task HandleUpdate(string token, Update update)
     {
@@ -70,17 +75,15 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
 
     #region IBotInfoProviderService implementation
 
-    // TODO make this method async somehow?
-    // it's not async and returns Task.FromResult just to prevent CS1998
-    // using async in ForEach apparently does not make the whole method async
-    public Task<IEnumerable<BotInfoModel>> GetInfo()
+    public async Task<IEnumerable<BotInfoModel>> GetInfo()
     {
         var ret = new List<BotInfoModel>();
-        _bots.ForEach(async b =>
+        foreach (var bot in _bots)
         {
-            ret.Add(await b.GetModel());
-        });
-        return Task.FromResult(ret.AsEnumerable());
+            var model = await bot.GetModel();
+            ret.Add(model);
+        }
+        return ret;
     }
 
     #endregion

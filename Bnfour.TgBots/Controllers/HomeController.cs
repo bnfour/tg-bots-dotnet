@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bnfour.TgBots.Controllers;
 
+/// <summary>
+/// Controller to handle the home/landing page
+/// that displays bot status along with some static content.
+/// </summary>
 public class HomeController : Controller
 {
     private readonly IBotInfoProviderService _infoProvider;

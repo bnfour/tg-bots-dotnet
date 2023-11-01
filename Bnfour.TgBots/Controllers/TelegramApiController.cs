@@ -6,6 +6,9 @@ using Telegram.Bot.Types;
 
 namespace Bnfour.TgBots.Controllers;
 
+/// <summary>
+/// Controller to handle bot input as webhooks from Telegram's backend.
+/// </summary>
 public class TelegramApiController : Controller
 {
     private readonly IBotManagerService _service;

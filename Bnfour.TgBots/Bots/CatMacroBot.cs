@@ -16,6 +16,60 @@ namespace Bnfour.TgBots.Bots;
 /// </summary>
 public class CatMacroBot : BotBase
 {
+    #region configuration
+
+    // taken straight from Python version
+    // TODO consider make MaxResults and SimilarityCutoff changeable via config file
+
+    /// <summary>
+    /// Maximum amount of images to return per query.
+    /// </summary>
+    private const int MaxResults = 7;
+
+    /// <summary>
+    /// Threshold for string matcher. Empirically set to provide "acceptable" results on my data.
+    /// </summary>
+    private const int SimilarityCutoff = 50;
+
+    protected override bool Inline => true;
+
+    // TODO don't forget to change after new and shiny reimplementation
+    protected override string Name => "Cat macro bot (old)";
+
+    protected override string HelpResponse => """
+    Currently, I'll provide prompts for cat images from my collection. For example, try querying me for "stop posting".
+
+    If you're my admin, you already know how to manage me.
+
+    """.ToMarkdownV2()
+    +
+    // ToMarkdownV2 can't be used if the text also contains formatting as it'll just escape all of it,
+    // so this is formatted by hand
+    """
+    **Important note:** there are plans to completely redo this bot to make _media_ collections per user, rather than single global _image_ collection\. Stay tuned\. Or not\.
+    """;
+
+    protected override string StartResponse => """
+    Hi there!
+
+    I'm an inline bot, so feel free to summon me in other chats to post cat-related images.
+    """.ToMarkdownV2();
+
+    #endregion
+
+    /// <summary>
+    /// Database context to use.
+    /// </summary>
+    private readonly CatMacroBotContext _context;
+
+    // TODO move this to database or helper singleton
+    // so this class can have not a singleton lifetime
+    /// <summary>
+    /// Currently enabled mode per admin account.
+    /// </summary>
+    private readonly Dictionary<long, CatMacroBotAdminStatus> _adminStatus;
+
+
     /// <summary>
     /// Constructor.
     /// </summary>
@@ -34,53 +88,6 @@ public class CatMacroBot : BotBase
             _adminStatus[admin] = CatMacroBotAdminStatus.Normal;
         }
     }
-
-    // taken straight from Python version
-    // TODO consider make these configurable
-
-    /// <summary>
-    /// Maximum amount of images to return per query.
-    /// </summary>
-    private const int MaxResults = 7;
-
-    /// <summary>
-    /// Threshold for string matcher. Empirically set to provide "acceptable" results on my data.
-    /// </summary>
-    private const int SimilarityCutoff = 50;
-
-    /// <summary>
-    /// Database context to use.
-    /// </summary>
-    private readonly CatMacroBotContext _context;
-
-    // TODO move this to database 
-    // so this can be stored outside of a singleton
-    /// <summary>
-    /// Currently enabled mode per admin account.
-    /// </summary>
-    private readonly Dictionary<long, CatMacroBotAdminStatus> _adminStatus;
-
-    protected override bool Inline => true;
-
-    // TODO don't forget to change after new and shiny reimplementation
-    protected override string Name => "Cat macro bot (old)";
-
-    protected override string HelpResponse => """
-    Currently, I'll provide prompts for cat images from my collection. For example, try querying me for "stop posting".
-
-    If you're my admin, you already know how to manage me.
-
-    """.ToMarkdownV2()
-    +
-    """
-    **Important note:** there are plans to completely redo this bot to make _media_ collections per user, rather than single global _image_ collection\. Stay tuned\. Or not\.
-    """;
-
-    protected override string StartResponse => """
-    Hi there!
-
-    I'm an inline bot, so feel free to summon me in other chats to post cat-related images.
-    """.ToMarkdownV2();
 
     protected override async Task HandleInlineQuery(InlineQuery inlineQuery)
     {
