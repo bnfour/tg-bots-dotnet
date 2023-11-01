@@ -1,0 +1,18 @@
+@model Bnfour.TgBots.Models.HomeModel
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <title>telegram bot(s) index</title>
+        <link href="~/css/styles.css" rel="stylesheet"/>
+    </head>
+    <body>
+        <div class="wrapper">
+            <img class="bw" src="~/i/wide.png" width="512px" height="256px" title="imagine drawing with a mouse" alt="scuffed picture of Yuno"/>
+            <h1>nothing to see here</h1>
+            <h2>щитпостинг ботс галоре</h2>
+            <p>This site hosts @Model.Bots.Count() bnfour's telegram bots. See more info on that on <a href="https://github.com/bnfour/tg-bots-dotnet">GitHub</a>.</p>
+            @await Html.PartialAsync("_BotList.cshtml", Model.Bots)
+        </div>
+    </body>
+</html>
