@@ -75,17 +75,15 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
 
     #region IBotInfoProviderService implementation
 
-    // TODO make this method async somehow?
-    // it's not async and returns Task.FromResult just to prevent CS1998
-    // using async in ForEach apparently does not make the whole method async
-    public Task<IEnumerable<BotInfoModel>> GetInfo()
+    public async Task<IEnumerable<BotInfoModel>> GetInfo()
     {
         var ret = new List<BotInfoModel>();
-        _bots.ForEach(async b =>
+        foreach (var bot in _bots)
         {
-            ret.Add(await b.GetModel());
-        });
-        return Task.FromResult(ret.AsEnumerable());
+            var model = await bot.GetModel();
+            ret.Add(model);
+        }
+        return ret;
     }
 
     #endregion
