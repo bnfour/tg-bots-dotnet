@@ -12,16 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 // we need to explicitly add NewtonsoftJson to parse webhook payloads
 builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 
-// we want a single instance serving both interfaces
-// it is a singleton because it has to manage webhooks among other things
-// this is not an ideal solution, as it's now possible to inject and use the BotManagerService directly
-// and not via intended separated interfaces, but i really wanted the interfaces separated
-// of course, it's also possible to split BotManagerService to two classes serving a common bot list,
-// but i can't be bothered to to that for now ¯\_(ツ)_/¯
-builder.Services.AddSingleton<BotManagerService>();
-
-builder.Services.AddSingleton<IBotManagerService>(s => s.GetService<BotManagerService>()!);
-builder.Services.AddSingleton<IBotInfoProviderService>(s => s.GetService<BotManagerService>()!);
+builder.Services.AddScoped<IBotInfoProviderService, BotInfoProviderService>();
+builder.Services.AddScoped<IBotWebhookManagerService, BotWebhookManagerService>();
+builder.Services.AddScoped<IUpdateHandlerService, UpdateHanderService>();
 
 builder.Services.AddSingleton<ICatMacroBotAdminHelperService, CatMacroBotAdminHelperService>();
 
@@ -82,9 +75,9 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}");
 
 app.Lifetime.ApplicationStarted.Register(async () =>
-    await (app.Services.GetService(typeof(IBotManagerService)) as IBotManagerService)!.SetWebhooks());
+    await (app.Services.GetService(typeof(IBotWebhookManagerService)) as IBotWebhookManagerService)!.SetWebhooks());
 
 app.Lifetime.ApplicationStopped.Register(async () =>
-    await (app.Services.GetService(typeof(IBotManagerService)) as IBotManagerService)!.RemoveWebhooks());
+    await (app.Services.GetService(typeof(IBotWebhookManagerService)) as IBotWebhookManagerService)!.RemoveWebhooks());
 
 app.Run();

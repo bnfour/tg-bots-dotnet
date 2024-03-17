@@ -11,9 +11,9 @@ namespace Bnfour.TgBots.Controllers;
 /// </summary>
 public class TelegramApiController : Controller
 {
-    private readonly IBotManagerService _service;
+    private readonly IUpdateHandlerService _service;
 
-    public TelegramApiController(IBotManagerService service)
+    public TelegramApiController(IUpdateHandlerService service)
     {
         _service = service;
     }
