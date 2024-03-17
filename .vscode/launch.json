@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Bnfour.TgBots/bin/Debug/net7.0/Bnfour.TgBots.dll",
+            "program": "${workspaceFolder}/Bnfour.TgBots/bin/Debug/net8.0/Bnfour.TgBots.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Bnfour.TgBots/bin/Debug/net7.0",
+            "cwd": "${workspaceFolder}/Bnfour.TgBots/bin/Debug/net8.0",
             "stopAtEntry": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
