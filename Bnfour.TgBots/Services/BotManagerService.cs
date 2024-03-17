@@ -32,11 +32,11 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
     public BotManagerService(IOptions<ApplicationOptions> options,
         CatMacroBotContext catMacroBotContext)
     {
-        _bots = new()
-        {
-            new LadderBot(options.Value.WebhookUrl, options.Value.LadderBotOptions),
-            new CatMacroBot(options.Value.WebhookUrl, options.Value.CatMacroBotOptions, catMacroBotContext)
-        };
+        _bots =
+        [
+            new LadderBot(options.Value.LadderBotOptions),
+            new CatMacroBot(options.Value.CatMacroBotOptions, catMacroBotContext)
+        ];
     }
 
     #region IBotManagerService implementation
