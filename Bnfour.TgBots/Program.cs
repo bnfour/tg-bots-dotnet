@@ -57,13 +57,10 @@ builder.Services.PostConfigure<ApplicationOptions>(appOptions =>
 AppDomain.CurrentDomain.SetData("DataDirectory", AppContext.BaseDirectory);
 
 // TODO move away from singletons everywhere?
-// probably move bots TelegramBotClient instances to a singleton
-// that manages the webhooks and holds the instances to use in other services,
-// which may be made scoped then (are they?)
 
 builder.Services.AddDbContext<CatMacroBotContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CatMacroBotConnectionString")),
-    ServiceLifetime.Singleton, ServiceLifetime.Singleton);
+    ServiceLifetime.Scoped, ServiceLifetime.Scoped);
 
 var app = builder.Build();
 
