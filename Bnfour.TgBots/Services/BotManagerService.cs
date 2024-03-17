@@ -29,13 +29,15 @@ public class BotManagerService : IBotManagerService, IBotInfoProviderService
     /// </summary>
     /// <param name="options">Application options to pass to bots.</param>
     /// <param name="catMacroBotContext">DB context for cat macro bot.</param>
+    /// <param name="catMacroBotAdminHelperService">Helper service instance for the helper bot.</param>
     public BotManagerService(IOptions<ApplicationOptions> options,
-        CatMacroBotContext catMacroBotContext)
+        CatMacroBotContext catMacroBotContext,
+        ICatMacroBotAdminHelperService catMacroBotAdminHelperService)
     {
         _bots =
         [
             new LadderBot(options.Value.LadderBotOptions),
-            new CatMacroBot(options.Value.CatMacroBotOptions, catMacroBotContext)
+            new CatMacroBot(options.Value.CatMacroBotOptions, catMacroBotContext, catMacroBotAdminHelperService)
         ];
     }
 
