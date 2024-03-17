@@ -77,9 +77,6 @@ public abstract class BotBase
     /// </summary>
     public bool Enabled => _client != null || _webhookUrl != null;
 
-    // TODO looks scuffed, any way to include the index URL in the options
-    // while still declaring it once?
-
     /// <summary>
     /// Constructor.
     /// </summary>
