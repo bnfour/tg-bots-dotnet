@@ -55,11 +55,13 @@ In this mode, the bot will try to match the sent images to its database, and rem
 This mimics behavior of the very first Python version. But this time, deletion by the image actually works, so there's no need to wait several years to realize that and implement deletion by caption as a stopgap!
 
 ## Configuration
-Settings for the app are defined in `Options` section in `appsettings.json`:
+Settings for the app are defined in `SharedOptions` and `Options` sections in `appsettings.json`:
 ```jsonc
 // ... omitted
+"SharedOptions": {
+    "WebhookUrl": "string"
+},
 "Options": {
-    "WebhookUrl": "string",
     "LadderBotOptions": {
         "Token": "string or null"
     },
@@ -69,7 +71,8 @@ Settings for the app are defined in `Options` section in `appsettings.json`:
     }
 }
 ```
-`WebhookUrl` is the URL to the app index as it appears to the outside world and _not_ the default listening address, `localhost:8081`. Webhooks to individual bots will be set to `[WebhookUrl]/[BotToken]`.
+
+`WebhookUrl` is the URL to the app index as it appears to the outside world through the reverse proxy and _not_ the default localhost listening address. Webhooks to individual bots will be set to `[WebhookUrl]/[Token]`.
 
 Subsections for individual bots follow next, each includes at least `Token` field. The Telegram API bot token goes here. If set to null, the bot is disabled.  
 Cat macro bot also has an extra option -- a list of accounts that can manage its database. The values here are integer IDs, not usernames.

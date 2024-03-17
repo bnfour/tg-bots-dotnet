@@ -73,11 +73,10 @@ public class CatMacroBot : BotBase
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
     /// <param name="options">Bot-specific options. Includes list of its admins.</param>
     /// <param name="context">Database context to use.</param>
-    public CatMacroBot(string webhookIndex, CatMacroBotOptions options, CatMacroBotContext context)
-        : base(webhookIndex, options)
+    public CatMacroBot(CatMacroBotOptions options, CatMacroBotContext context)
+        : base(options)
     {
         _context = context;
         

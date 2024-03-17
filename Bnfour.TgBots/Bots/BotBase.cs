@@ -77,20 +77,16 @@ public abstract class BotBase
     /// </summary>
     public bool Enabled => _client != null || _webhookUrl != null;
 
-    // TODO looks scuffed, any way to include the index URL in the options
-    // while still declaring it once?
-
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
     /// <param name="options">Bot-specific options.</param>
-    public BotBase(string webhookIndex, BotOptionsBase options)
+    public BotBase(BotOptionsBase options)
     {
-        if (!string.IsNullOrEmpty(options.Token))
+        if (!string.IsNullOrEmpty(options.Token) && !string.IsNullOrEmpty(options.WebhookUrl))
         {
             // don't care about the slash being or not being at the end of the URL
-            _webhookUrl = webhookIndex.TrimEnd('/') + "/" + options.Token;
+            _webhookUrl = options.WebhookUrl.TrimEnd('/') + "/" + options.Token;
             _client = new TelegramBotClient(options.Token);
             _token = options.Token;
         }
