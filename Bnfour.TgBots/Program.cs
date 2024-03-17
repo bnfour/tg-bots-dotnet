@@ -22,6 +22,8 @@ builder.Services.AddSingleton<BotManagerService>();
 builder.Services.AddSingleton<IBotManagerService>(s => s.GetService<BotManagerService>()!);
 builder.Services.AddSingleton<IBotInfoProviderService>(s => s.GetService<BotManagerService>()!);
 
+builder.Services.AddSingleton<ICatMacroBotAdminHelperService, CatMacroBotAdminHelperService>();
+
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Options"));
 
 // we're going to overengineer to be "futureproof"

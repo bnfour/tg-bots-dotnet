@@ -9,5 +9,8 @@ namespace Bnfour.TgBots.Interfaces;
 /// </summary>
 public interface ICatMacroBotAdminHelperService
 {
+    /// <summary>
+    /// Holds the admin id => status data.
+    /// </summary>
     Dictionary<long, CatMacroBotAdminStatus> AdminStatus { get; }
 }
