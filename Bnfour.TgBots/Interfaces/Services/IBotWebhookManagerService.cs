@@ -1,4 +1,4 @@
-namespace Bnfour.TgBots.Interfaces;
+namespace Bnfour.TgBots.Interfaces.Services;
 
 public interface IBotWebhookManagerService
 {

@@ -3,7 +3,7 @@ using Bnfour.TgBots.Entities;
 using Bnfour.TgBots.Enums;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
-using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Interfaces.Services;
 using Bnfour.TgBots.Options.BotOptions;
 
 using Telegram.Bot;

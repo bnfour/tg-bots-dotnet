@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 
 using Bnfour.TgBots.Enums;
-using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Interfaces.Services;
 using Bnfour.TgBots.Options;
 
 namespace Bnfour.TgBots.Services;

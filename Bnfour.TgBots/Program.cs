@@ -1,5 +1,5 @@
 using Bnfour.TgBots.Contexts;
-using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Interfaces.Services;
 using Bnfour.TgBots.Options;
 using Bnfour.TgBots.Options.BotOptions;
 using Bnfour.TgBots.Services;

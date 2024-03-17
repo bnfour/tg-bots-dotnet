@@ -1,4 +1,4 @@
-using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Interfaces.Services;
 using Bnfour.TgBots.Models;
 
 namespace Bnfour.TgBots.Services;

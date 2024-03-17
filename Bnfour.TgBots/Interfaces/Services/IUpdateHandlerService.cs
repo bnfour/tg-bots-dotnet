@@ -1,6 +1,6 @@
 using Telegram.Bot.Types;
 
-namespace Bnfour.TgBots.Interfaces;
+namespace Bnfour.TgBots.Interfaces.Services;
 
 public interface IUpdateHandlerService
 {
