@@ -6,7 +6,7 @@ public class CatMacroBotOptions : BotOptionsBase
     /// List of user IDs that are considered the bot's admins,
     /// and are able to manage the database.
     /// </summary>
-    public List<long>? Admins { get; set; }
+    public required List<long> Admins { get; set; }
 
     // please note that this bot configuration also includes
     // a connection string to its own little database

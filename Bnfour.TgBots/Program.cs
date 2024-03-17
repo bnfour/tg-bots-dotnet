@@ -3,6 +3,7 @@ using Bnfour.TgBots.Interfaces;
 using Bnfour.TgBots.Options;
 using Bnfour.TgBots.Options.BotOptions;
 using Bnfour.TgBots.Services;
+
 using Microsoft.EntityFrameworkCore;
 
 // a shining example on how NOT to configure your app
@@ -21,6 +22,8 @@ builder.Services.AddSingleton<BotManagerService>();
 
 builder.Services.AddSingleton<IBotManagerService>(s => s.GetService<BotManagerService>()!);
 builder.Services.AddSingleton<IBotInfoProviderService>(s => s.GetService<BotManagerService>()!);
+
+builder.Services.AddSingleton<ICatMacroBotAdminHelperService, CatMacroBotAdminHelperService>();
 
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Options"));
 
