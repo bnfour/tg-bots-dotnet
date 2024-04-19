@@ -7,5 +7,10 @@ namespace Bnfour.TgBots.Interfaces.Factories;
 /// </summary>
 public interface IBotFactory
 {
+    /// <summary>
+    /// Get the bot by its token, to handle the incoming update.
+    /// </summary>
+    /// <param name="token">Token to match with the bot.</param>
+    /// <returns>The bot, or null if no bot with provided token is found.</returns>
     public IBot? GetBotByToken(string token);
 }
