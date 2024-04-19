@@ -7,5 +7,8 @@ namespace Bnfour.TgBots.Interfaces.Factories;
 /// </summary>
 public interface IBotInfoFactory
 {
+    /// <summary>
+    /// Returns all bots, including not enabled, to get their basic info.
+    /// </summary>
     public IEnumerable<IBotInfo> GetBotInfo();
 }

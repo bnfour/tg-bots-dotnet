@@ -1,4 +1,6 @@
 using Bnfour.TgBots.Contexts;
+using Bnfour.TgBots.Factories;
+using Bnfour.TgBots.Interfaces.Factories;
 using Bnfour.TgBots.Interfaces.Services;
 using Bnfour.TgBots.Options;
 using Bnfour.TgBots.Options.BotOptions;
@@ -15,6 +17,10 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 builder.Services.AddScoped<IBotInfoProviderService, BotInfoProviderService>();
 builder.Services.AddScoped<IBotWebhookManagerService, BotWebhookManagerService>();
 builder.Services.AddScoped<IUpdateHandlerService, UpdateHanderService>();
+
+builder.Services.AddScoped<IBotFactory, BotFactory>();
+builder.Services.AddScoped<IBotInfoFactory, BotFactory>();
+builder.Services.AddScoped<IBotWebhookFactory, BotFactory>();
 
 builder.Services.AddSingleton<ICatMacroBotAdminHelperService, CatMacroBotAdminHelperService>();
 

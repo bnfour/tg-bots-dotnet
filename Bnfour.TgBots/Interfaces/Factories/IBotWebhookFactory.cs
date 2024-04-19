@@ -7,5 +7,8 @@ namespace Bnfour.TgBots.Interfaces.Factories;
 /// </summary>
 public interface IBotWebhookFactory
 {
+    /// <summary>
+    /// Returns all enabled bots to manage their webhook state.
+    /// </summary>
     public IEnumerable<IBotWebhook> GetBotWebhooks();
 }
