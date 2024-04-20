@@ -4,6 +4,10 @@ using Bnfour.TgBots.Models;
 
 namespace Bnfour.TgBots.Services;
 
+/// <summary>
+/// Provides the bot info for the status page.
+/// </summary>
+/// <param name="factory">Factory to provide bot instances to get info from.</param>
 public class BotInfoProviderService(IBotInfoFactory factory) : IBotInfoProviderService
 {
     private readonly IBotInfoFactory _factory = factory;
