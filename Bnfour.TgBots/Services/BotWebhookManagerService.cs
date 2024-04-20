@@ -1,18 +1,29 @@
+using Bnfour.TgBots.Interfaces.Factories;
 using Bnfour.TgBots.Interfaces.Services;
 
 namespace Bnfour.TgBots.Services;
 
-public class BotWebhookManagerService : IBotWebhookManagerService
+/// <summary>
+/// Manages the webhooks for the bots on the application startup and shutdown.
+/// </summary>
+/// <param name="factory">Factory to get bot instances to manage from.</param>
+public class BotWebhookManagerService(IBotWebhookFactory factory) : IBotWebhookManagerService
 {
+    private readonly IBotWebhookFactory _factory = factory;
+
     public async Task RemoveWebhooks()
     {
-        // TODO instantiate all active bots and call their webhook removal method
-        throw new NotImplementedException();
+        foreach (var bot in _factory.GetBotWebhooks())
+        {
+            await bot.RemoveWebhook();
+        }
     }
 
     public async Task SetWebhooks()
     {
-        // TODO instantiate all active bots and call their webhook setting method
-        throw new NotImplementedException();
+        foreach (var bot in _factory.GetBotWebhooks())
+        {
+            await bot.SetWebhook();
+        }
     }
 }
