@@ -1,6 +1,6 @@
 using Bnfour.TgBots.Enums;
 
-namespace Bnfour.TgBots.Interfaces;
+namespace Bnfour.TgBots.Interfaces.Services;
 
 /// <summary>
 /// Holds the admin mode (whether the delete mode is active)
