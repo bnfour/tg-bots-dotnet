@@ -18,7 +18,7 @@ public class CatMacroBotAdminHelperService : ICatMacroBotAdminHelperService
     /// <param name="options">Options to get the list of admins from.</param>
     public CatMacroBotAdminHelperService(IOptions<ApplicationOptions> options)
     {
-        foreach (var adminId in options.Value.CatMacroBotOptions.Admins)
+        foreach (var adminId in options.Value?.CatMacroBotOptions?.Admins ?? [ ])
         {
             _status[adminId] = CatMacroBotAdminStatus.Normal;
         }
