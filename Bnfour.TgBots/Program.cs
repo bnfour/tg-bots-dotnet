@@ -8,7 +8,7 @@ using Bnfour.TgBots.Services;
 
 using Microsoft.EntityFrameworkCore;
 
-// a shining example on how NOT to configure your app
+// this is way more convoluted than i had imagined
 
 var builder = WebApplication.CreateBuilder(args);
 // we need to explicitly add NewtonsoftJson to parse webhook payloads
@@ -19,7 +19,7 @@ builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection(
 builder.Services.AddDbContext<CatMacroBotContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CatMacroBotConnectionString")),
     ServiceLifetime.Scoped, ServiceLifetime.Scoped);
-
+// this one's data could be moved to database
 builder.Services.AddSingleton<ICatMacroBotAdminHelperService, CatMacroBotAdminHelperService>();
 
 builder.Services.AddScoped<IBotFactory, BotFactory>();
@@ -75,9 +75,23 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}");
 
 app.Lifetime.ApplicationStarted.Register(async () =>
-    await (app.Services.GetService(typeof(IBotWebhookManagerService)) as IBotWebhookManagerService)!.SetWebhooks());
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<IBotWebhookManagerService>()
+            ?? throw new ApplicationException("IBotWebhookManagerService not found at startup");
+        await service.SetWebhooks();
+    }
+});
 
 app.Lifetime.ApplicationStopped.Register(async () =>
-    await (app.Services.GetService(typeof(IBotWebhookManagerService)) as IBotWebhookManagerService)!.RemoveWebhooks());
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<IBotWebhookManagerService>()
+            ?? throw new ApplicationException("IBotWebhookManagerService not found at shutdown");
+        await service.RemoveWebhooks();
+    }
+});
 
 app.Run();
