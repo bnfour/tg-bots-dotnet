@@ -100,3 +100,6 @@ Current version is just a rewrite of Python version. There are plans to:
 This whole "take a _mostly_ working app and make it from scratch one more time on another stack" started because I was tinkering with original version to make another bot to use in my chats. While doing that, I thought that the architecture could be better and so decided to make a .NET version as I'm more comfortable with it.  
 
 Yet the architecture is still the same and there's no new bots, but we're getting there ╭( ･ㅂ･)و
+
+## Version history
+TODO fill in before releasing

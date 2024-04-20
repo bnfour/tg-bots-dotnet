@@ -155,7 +155,7 @@ public class LadderBot : BotBase
     /// </summary>
     /// <param name="input">Text from the query.</param>
     /// <returns>Results, ready to be sent to the Telegram API.</returns>
-    private IEnumerable<InlineQueryResult> GenerateResults(string input)
+    private List<InlineQueryResult> GenerateResults(string input)
     {
         input = Normalize(input);
 
@@ -168,8 +168,8 @@ public class LadderBot : BotBase
             ParseMode = ParseMode.MarkdownV2
         };
 
-        return new List<InlineQueryResult>
-        {
+        return
+        [
             new InlineQueryResultArticle(Guid.NewGuid().ToString(), SpacesTitle, spacesContent)
             {
                 Description = SpacesDescription,
@@ -184,7 +184,7 @@ public class LadderBot : BotBase
                 ThumbnailHeight = ThumbSize,
                 ThumbnailWidth = ThumbSize
             }
-        };
+        ];
     }
 
     /// <summary>

@@ -7,10 +7,10 @@ public class BotInfoModel
     /// <summary>
     /// Indicates if the bot is properly configured and active.
     /// </summary>
-    public bool IsOnline { get; set; }
+    public required bool IsOnline { get; set; }
     /// <summary>
     /// If the bot is active, it's telegram username.
     /// Null if the bot is not active.
     /// </summary>
-    public string? Username { get; set; }
+    public required string? Username { get; set; }
 }

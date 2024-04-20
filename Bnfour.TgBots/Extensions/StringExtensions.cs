@@ -1,5 +1,8 @@
 namespace Bnfour.TgBots.Extensions;
 
+// see https://core.telegram.org/bots/api#markdownv2-style
+// for details about so-called Markdown V2 formatting
+
 /// <summary>
 /// Helper to make strings MarkdownV2 friendly. Used when sending,
 /// so most strings in the app can be written without care for formatting.
@@ -9,11 +12,11 @@ public static class StringExtensions
     /// <summary>
     /// List of characters to escape in order to satisfy the parser.
     /// </summary>
-    private readonly static string[] _toEscape = new[]
-    {
+    private readonly static string[] _toEscape =
+    [
         "_", "*", "[", "]", "(", ")", "~", "`", ">",
-        "#", "+", "-", "=", "|", "{", "}", ".", "!" 
-    };
+        "#", "+", "-", "=", "|", "{", "}", ".", "!"
+    ];
 
     /// <summary>
     /// Escapes the dangerous symbols in the string.

@@ -7,5 +7,8 @@ namespace Bnfour.TgBots.Interfaces.Bots;
 /// </summary>
 public interface IBotInfo
 {
+    /// <summary>
+    /// Get a model to display on the web page.
+    /// </summary>
     public Task<BotInfoModel> GetModel();
 }

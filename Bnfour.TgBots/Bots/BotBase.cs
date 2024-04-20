@@ -123,9 +123,9 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     {
         ThrowIfNotEnabled();
 
-        var allowedUpdateTypes = Inline
-            ? new[] { UpdateType.Message, UpdateType.InlineQuery }
-            : new[] { UpdateType.Message };
+        IEnumerable<UpdateType> allowedUpdateTypes = Inline
+            ? [UpdateType.Message, UpdateType.InlineQuery]
+            : [UpdateType.Message];
 
         await _client!.SetWebhookAsync(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
 
@@ -220,7 +220,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
 
     /// <summary>
     /// Handles an inline query, if the bot is designated as an inline bot.
-    /// May not be implemented for non-inline bots.
+    /// May be not implemented for non-inline bots.
     /// </summary>
     /// <param name="inlineQuery">Inline query to process.</param>
     protected abstract Task HandleInlineQuery(InlineQuery inlineQuery);
@@ -247,11 +247,11 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
 
         if (text.StartsWith("/"))
         {
+            // message.From is null-checked before calling this method
             await HandleCommand(message.From!.Id, text);
         }
         else
         {
-            // From is null-checked before calling this method
             await ReplyToArbitaryText(message.From!.Id);
         }
     }

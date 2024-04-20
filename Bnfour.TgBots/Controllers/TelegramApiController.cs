@@ -10,14 +10,9 @@ namespace Bnfour.TgBots.Controllers;
 /// <summary>
 /// Controller to handle bot input as webhooks from Telegram's backend.
 /// </summary>
-public class TelegramApiController : Controller
+public class TelegramApiController(IUpdateHandlerService service) : Controller
 {
-    private readonly IUpdateHandlerService _service;
-
-    public TelegramApiController(IUpdateHandlerService service)
-    {
-        _service = service;
-    }
+    private readonly IUpdateHandlerService _service = service;
 
     // POST /{bot token}
 
