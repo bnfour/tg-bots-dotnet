@@ -1,28 +1,34 @@
 using Bnfour.TgBots.Contexts;
-using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Factories;
+using Bnfour.TgBots.Interfaces.Factories;
+using Bnfour.TgBots.Interfaces.Services;
 using Bnfour.TgBots.Options;
 using Bnfour.TgBots.Options.BotOptions;
 using Bnfour.TgBots.Services;
+
 using Microsoft.EntityFrameworkCore;
 
-// a shining example on how NOT to configure your app
+// this is way more convoluted than i had imagined
 
 var builder = WebApplication.CreateBuilder(args);
 // we need to explicitly add NewtonsoftJson to parse webhook payloads
 builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 
-// we want a single instance serving both interfaces
-// it is a singleton because it has to manage webhooks among other things
-// this is not an ideal solution, as it's now possible to inject and use the BotManagerService directly
-// and not via intended separated interfaces, but i really wanted the interfaces separated
-// of course, it's also possible to split BotManagerService to two classes serving a common bot list,
-// but i can't be bothered to to that for now ¯\_(ツ)_/¯
-builder.Services.AddSingleton<BotManagerService>();
-
-builder.Services.AddSingleton<IBotManagerService>(s => s.GetService<BotManagerService>()!);
-builder.Services.AddSingleton<IBotInfoProviderService>(s => s.GetService<BotManagerService>()!);
-
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Options"));
+
+builder.Services.AddDbContext<CatMacroBotContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("CatMacroBotConnectionString")),
+    ServiceLifetime.Scoped, ServiceLifetime.Scoped);
+// this one's data could be moved to database
+builder.Services.AddSingleton<ICatMacroBotAdminHelperService, CatMacroBotAdminHelperService>();
+
+builder.Services.AddScoped<IBotFactory, BotFactory>();
+builder.Services.AddScoped<IBotInfoFactory, BotFactory>();
+builder.Services.AddScoped<IBotWebhookFactory, BotFactory>();
+
+builder.Services.AddScoped<IBotInfoProviderService, BotInfoProviderService>();
+builder.Services.AddScoped<IBotWebhookManagerService, BotWebhookManagerService>();
+builder.Services.AddScoped<IUpdateHandlerService, UpdateHanderService>();
 
 // we're going to overengineer to be "futureproof"
 // (and also to look even more like an enterprise-ready hello world app)
@@ -55,19 +61,9 @@ builder.Services.PostConfigure<ApplicationOptions>(appOptions =>
 
 // this is used to force the code to use database from the current (e.g output for debug) directory
 // instead of using the file in the project root every launch
-
 // please note that this value ends with backslash, so in the connection string,
 // file name goes straight after |DataDirectory|, no slashes of any kind
 AppDomain.CurrentDomain.SetData("DataDirectory", AppContext.BaseDirectory);
-
-// TODO move away from singletons everywhere?
-// probably move bots TelegramBotClient instances to a singleton
-// that manages the webhooks and holds the instances to use in other services,
-// which may be made scoped then (are they?)
-
-builder.Services.AddDbContext<CatMacroBotContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("CatMacroBotConnectionString")),
-    ServiceLifetime.Singleton, ServiceLifetime.Singleton);
 
 var app = builder.Build();
 
@@ -79,9 +75,23 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}");
 
 app.Lifetime.ApplicationStarted.Register(async () =>
-    await (app.Services.GetService(typeof(IBotManagerService)) as IBotManagerService)!.SetWebhooks());
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<IBotWebhookManagerService>()
+            ?? throw new ApplicationException("IBotWebhookManagerService not found at startup");
+        await service.SetWebhooks();
+    }
+});
 
 app.Lifetime.ApplicationStopped.Register(async () =>
-    await (app.Services.GetService(typeof(IBotManagerService)) as IBotManagerService)!.RemoveWebhooks());
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<IBotWebhookManagerService>()
+            ?? throw new ApplicationException("IBotWebhookManagerService not found at shutdown");
+        await service.RemoveWebhooks();
+    }
+});
 
 app.Run();

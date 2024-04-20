@@ -1,6 +1,6 @@
 using Bnfour.TgBots.Models;
 
-namespace Bnfour.TgBots.Interfaces;
+namespace Bnfour.TgBots.Interfaces.Services;
 /// <summary>
 /// Used to provide status bot info to the "landing" page.
 /// </summary>

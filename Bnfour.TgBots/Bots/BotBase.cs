@@ -1,6 +1,7 @@
 using System.Reflection;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
+using Bnfour.TgBots.Interfaces.Bots;
 using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options.BotOptions;
 using Telegram.Bot;
@@ -12,7 +13,7 @@ namespace Bnfour.TgBots.Bots;
 /// <summary>
 /// Common class for a bot.
 /// </summary>
-public abstract class BotBase
+public abstract class BotBase: IBot, IBotWebhook, IBotInfo
 {
     /// <summary>
     /// Telegram bot client instance to use.

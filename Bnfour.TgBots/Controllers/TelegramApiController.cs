@@ -1,7 +1,8 @@
-using System.Net;
 using Bnfour.TgBots.Exceptions;
-using Bnfour.TgBots.Interfaces;
+using Bnfour.TgBots.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+
+using System.Net;
 using Telegram.Bot.Types;
 
 namespace Bnfour.TgBots.Controllers;
@@ -11,9 +12,9 @@ namespace Bnfour.TgBots.Controllers;
 /// </summary>
 public class TelegramApiController : Controller
 {
-    private readonly IBotManagerService _service;
+    private readonly IUpdateHandlerService _service;
 
-    public TelegramApiController(IBotManagerService service)
+    public TelegramApiController(IUpdateHandlerService service)
     {
         _service = service;
     }
