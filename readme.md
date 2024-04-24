@@ -84,10 +84,7 @@ As briefly mentioned in previous section, the app only listens on local address 
 For running locally, [ngrok](https://ngrok.com/) is one of the options. For actual hosting, use any decent web server as a reverse proxy; I'm using [nginx](https://nginx.org/) for that.
 
 ## Futher developments
-It really shows that this app once was a Python script written by someone that just read a tutorial on that topic.
-
-### Architecture
-The architecture leaves a lot to be desired, as almost everything is a singleton in order to preserve some state in between requests. Most notable offenders are the Telegram client instances that hold the webhooks -- and these are currently tightly glued to the rest of business logic, forcing things to use singleton lifetime.
+Very tentative.
 
 ### New version (and name) for Cat macro bot
 Current version is just a rewrite of Python version. There are plans to:
@@ -99,7 +96,20 @@ Current version is just a rewrite of Python version. There are plans to:
 ### New bot(s) (?)
 This whole "take a _mostly_ working app and make it from scratch one more time on another stack" started because I was tinkering with original version to make another bot to use in my chats. While doing that, I thought that the architecture could be better and so decided to make a .NET version as I'm more comfortable with it.  
 
-Yet the architecture is still the same and there's no new bots, but we're getting there ╭( ･ㅂ･)و
+There's no new bots, but we're getting there, at least the architecture was fixed ╭( ･ㅂ･)و
 
 ## Version history
-TODO fill in before releasing
+### [v1.0](https://github.com/bnfour/tg-bots-dotnet/tree/v1.0) — dotnet rewrite of a Python script
+The initial release based on the [original Python version](https://github.com/bnfour/tg-bots).
+
+The most notable feature is that the deletion by image for Cat macro bot actually worked this time.
+
+### v1.1 — added the architecture
+Code quality improvement release.
+
+The previous release had every service as a singleton, because I misunderstood [Telegram.Bot](https://github.com/TelegramBots/Telegram.Bot)'s lifecycle when managing webhooks. This has been fixed. Alongside the lifecycle changes, there are also other architecture improvements, notably splitting the do-it-all "manager" class to single responsibility classes. There's even a bot factory now!
+
+Notable changes from `v1.0`:
+- .NET 8 runtime — an LTS one, probably will migrate straight to .NET 10 in the future
+- Webhook URL in config is moved to its own subsection `SharedOptions` from `Options`
+- Probably better architecture
