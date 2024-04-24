@@ -104,7 +104,7 @@ The initial release based on the [original Python version](https://github.com/bn
 
 The most notable feature is that the deletion by image for Cat macro bot actually worked this time.
 
-### v1.1 — added the architecture
+### [v1.1](https://github.com/bnfour/tg-bots-dotnet/tree/v1.1) — added the architecture
 Code quality improvement release.
 
 The previous release had every service as a singleton, because I misunderstood [Telegram.Bot](https://github.com/TelegramBots/Telegram.Bot)'s lifecycle when managing webhooks. This has been fixed. Alongside the lifecycle changes, there are also other architecture improvements, notably splitting the do-it-all "manager" class to single responsibility classes. There's even a bot factory now!
