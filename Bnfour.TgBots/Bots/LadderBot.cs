@@ -113,9 +113,9 @@ public class LadderBot : BotBase
     /// </summary>
     /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
     /// <param name="options">Bot-specific options.</param>
-    public LadderBot(string webhookIndex, LadderBotOptions options) : base(webhookIndex, options)
+    public LadderBot(LadderBotOptions options) : base(options)
     {
-        _webIndex = webhookIndex;
+        _webIndex = options.WebhookUrl!;
     }
 
     protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
@@ -155,7 +155,7 @@ public class LadderBot : BotBase
     /// </summary>
     /// <param name="input">Text from the query.</param>
     /// <returns>Results, ready to be sent to the Telegram API.</returns>
-    private IEnumerable<InlineQueryResult> GenerateResults(string input)
+    private List<InlineQueryResult> GenerateResults(string input)
     {
         input = Normalize(input);
 
@@ -168,8 +168,8 @@ public class LadderBot : BotBase
             ParseMode = ParseMode.MarkdownV2
         };
 
-        return new List<InlineQueryResult>
-        {
+        return
+        [
             new InlineQueryResultArticle(Guid.NewGuid().ToString(), SpacesTitle, spacesContent)
             {
                 Description = SpacesDescription,
@@ -184,7 +184,7 @@ public class LadderBot : BotBase
                 ThumbnailHeight = ThumbSize,
                 ThumbnailWidth = ThumbSize
             }
-        };
+        ];
     }
 
     /// <summary>

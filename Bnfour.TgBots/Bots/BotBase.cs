@@ -1,6 +1,7 @@
 using System.Reflection;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
+using Bnfour.TgBots.Interfaces.Bots;
 using Bnfour.TgBots.Models;
 using Bnfour.TgBots.Options.BotOptions;
 using Telegram.Bot;
@@ -12,7 +13,7 @@ namespace Bnfour.TgBots.Bots;
 /// <summary>
 /// Common class for a bot.
 /// </summary>
-public abstract class BotBase
+public abstract class BotBase: IBot, IBotWebhook, IBotInfo
 {
     /// <summary>
     /// Telegram bot client instance to use.
@@ -77,20 +78,16 @@ public abstract class BotBase
     /// </summary>
     public bool Enabled => _client != null || _webhookUrl != null;
 
-    // TODO looks scuffed, any way to include the index URL in the options
-    // while still declaring it once?
-
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
     /// <param name="options">Bot-specific options.</param>
-    public BotBase(string webhookIndex, BotOptionsBase options)
+    public BotBase(BotOptionsBase options)
     {
-        if (!string.IsNullOrEmpty(options.Token))
+        if (!string.IsNullOrEmpty(options.Token) && !string.IsNullOrEmpty(options.WebhookUrl))
         {
             // don't care about the slash being or not being at the end of the URL
-            _webhookUrl = webhookIndex.TrimEnd('/') + "/" + options.Token;
+            _webhookUrl = options.WebhookUrl.TrimEnd('/') + "/" + options.Token;
             _client = new TelegramBotClient(options.Token);
             _token = options.Token;
         }
@@ -126,9 +123,9 @@ public abstract class BotBase
     {
         ThrowIfNotEnabled();
 
-        var allowedUpdateTypes = Inline
-            ? new[] { UpdateType.Message, UpdateType.InlineQuery }
-            : new[] { UpdateType.Message };
+        IEnumerable<UpdateType> allowedUpdateTypes = Inline
+            ? [UpdateType.Message, UpdateType.InlineQuery]
+            : [UpdateType.Message];
 
         await _client!.SetWebhookAsync(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
 
@@ -223,7 +220,7 @@ public abstract class BotBase
 
     /// <summary>
     /// Handles an inline query, if the bot is designated as an inline bot.
-    /// May not be implemented for non-inline bots.
+    /// May be not implemented for non-inline bots.
     /// </summary>
     /// <param name="inlineQuery">Inline query to process.</param>
     protected abstract Task HandleInlineQuery(InlineQuery inlineQuery);
@@ -250,11 +247,11 @@ public abstract class BotBase
 
         if (text.StartsWith("/"))
         {
+            // message.From is null-checked before calling this method
             await HandleCommand(message.From!.Id, text);
         }
         else
         {
-            // From is null-checked before calling this method
             await ReplyToArbitaryText(message.From!.Id);
         }
     }
@@ -361,7 +358,7 @@ public abstract class BotBase
         **{Name.ToMarkdownV2()}** {GetVersion()}\.
 
         [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
-        by bnfour, 2023\.
+        by bnfour, 2023–2024\.
         """);
     }
 

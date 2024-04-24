@@ -3,6 +3,7 @@ using Bnfour.TgBots.Entities;
 using Bnfour.TgBots.Enums;
 using Bnfour.TgBots.Exceptions;
 using Bnfour.TgBots.Extensions;
+using Bnfour.TgBots.Interfaces.Services;
 using Bnfour.TgBots.Options.BotOptions;
 
 using Telegram.Bot;
@@ -62,31 +63,22 @@ public class CatMacroBot : BotBase
     /// </summary>
     private readonly CatMacroBotContext _context;
 
-    // TODO move this to database or helper singleton
-    // so this class can have not a singleton lifetime
     /// <summary>
     /// Currently enabled mode per admin account.
     /// </summary>
-    private readonly Dictionary<long, CatMacroBotAdminStatus> _adminStatus;
-
+    private readonly ICatMacroBotAdminHelperService _adminHelper;
 
     /// <summary>
     /// Constructor.
     /// </summary>
-    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
     /// <param name="options">Bot-specific options. Includes list of its admins.</param>
     /// <param name="context">Database context to use.</param>
-    public CatMacroBot(string webhookIndex, CatMacroBotOptions options, CatMacroBotContext context)
-        : base(webhookIndex, options)
+    /// <param name="adminHelper">Helper service with persistent state to use.</param>
+    public CatMacroBot(CatMacroBotOptions options, CatMacroBotContext context, ICatMacroBotAdminHelperService adminHelper)
+        : base(options)
     {
         _context = context;
-        
-        var admins = options.Admins ?? new List<long>();
-        _adminStatus = new();
-        foreach (var admin in admins)
-        {
-            _adminStatus[admin] = CatMacroBotAdminStatus.Normal;
-        }
+        _adminHelper = adminHelper;
     }
 
     protected override async Task HandleInlineQuery(InlineQuery inlineQuery)
@@ -139,11 +131,11 @@ public class CatMacroBot : BotBase
             throw new NoRequiredDataException("Message.Photo");
         }
 
-        if (_adminStatus[fromId] == CatMacroBotAdminStatus.Normal)
+        if (_adminHelper.AdminStatus[fromId] == CatMacroBotAdminStatus.Normal)
         {
             await AddImage(message);
         }
-        else if (_adminStatus[fromId] == CatMacroBotAdminStatus.Deletion)
+        else if (_adminHelper.AdminStatus[fromId] == CatMacroBotAdminStatus.Deletion)
         {
             await RemoveImage(message);
         }
@@ -236,7 +228,7 @@ public class CatMacroBot : BotBase
         _context.Remove(toRemove);
         await _context.SaveChangesAsync();
         
-        _adminStatus[fromId] = CatMacroBotAdminStatus.Normal;
+        _adminHelper.AdminStatus[fromId] = CatMacroBotAdminStatus.Normal;
 
         await Send(fromId, "Removal OK! ('-^)b".ToMarkdownV2());
     }
@@ -246,7 +238,7 @@ public class CatMacroBot : BotBase
     /// </summary>
     /// <param name="id">ID to check.</param>
     /// <returns>True if the user is an admin, false otherwise.</returns>
-    private bool IsAdmin(long id) => _adminStatus.ContainsKey(id);
+    private bool IsAdmin(long id) => _adminHelper.AdminStatus.ContainsKey(id);
 
     protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {
@@ -278,13 +270,13 @@ public class CatMacroBot : BotBase
     /// <param name="userId">ID of the user who sent the command to reply to.</param>
     private async Task HandleDelete(long userId)
     {
-        if (_adminStatus[userId] == CatMacroBotAdminStatus.Deletion)
+        if (_adminHelper.AdminStatus[userId] == CatMacroBotAdminStatus.Deletion)
         {
             await Send(userId, "You're already in deletion mode!".ToMarkdownV2());
         }
         else
         {
-            _adminStatus[userId] = CatMacroBotAdminStatus.Deletion;
+            _adminHelper.AdminStatus[userId] = CatMacroBotAdminStatus.Deletion;
             await Send(userId, "Deletion mode activated! Forward or query the image you want to remove, or /cancel".ToMarkdownV2());
         }
     }
@@ -296,13 +288,13 @@ public class CatMacroBot : BotBase
     /// <param name="userId">ID of the user who sent the command to reply to.</param>
     private async Task HandleCancel(long userId)
     {
-        if (_adminStatus[userId] == CatMacroBotAdminStatus.Normal)
+        if (_adminHelper.AdminStatus[userId] == CatMacroBotAdminStatus.Normal)
         {
             await Send(userId, "You've nothing to cancel!".ToMarkdownV2());
         }
         else
         {
-            _adminStatus[userId] = CatMacroBotAdminStatus.Normal;
+            _adminHelper.AdminStatus[userId] = CatMacroBotAdminStatus.Normal;
             await Send(userId, "Deletion mode cancelled! Image adding mode active!".ToMarkdownV2());
         }
     }
