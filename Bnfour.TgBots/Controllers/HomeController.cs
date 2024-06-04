@@ -15,6 +15,7 @@ public class HomeController(IBotInfoProviderService infoProvider) : Controller
 
     // GET /
 
+    [HttpGet, Route("/")]
     public async Task<IActionResult> Index()
     {
         var model = new HomeModel
