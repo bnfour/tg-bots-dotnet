@@ -1,0 +1,57 @@
+:root {
+    --accent-orange: #ca5010;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-family: var(--font-mono);
+    margin: 16px 0;
+    text-align: center;
+}
+
+a.error-home {
+    padding: 4px 4px;
+    color: var(--accent-orange);
+}
+
+a.error-home:hover {
+    background-color: var(--accent-orange);
+    color: #fff;
+}
+
+.container {
+    width: 600px;
+}
+
+svg {
+    max-height: 67vh;
+}
+
+svg #path_for_text {
+    visibility: hidden;
+}
+
+svg text {
+    font-family: var(--font-mono) !important;
+}
+
+
+/* these numbered ids after the copypaste, i cannot */
+
+svg text, svg #body, svg #pupil, svg #pupil-3 {
+    fill: var(--fg) !important;
+}
+
+svg #eye-white-thing-how-does-it-called-again,
+svg #eye-white-thing-how-does-it-called-again-7 {
+    fill: var(--bg) !important;
+}
+
+svg #all-body > path:not(#body) {
+    stroke: var(--fg) !important;
+}
