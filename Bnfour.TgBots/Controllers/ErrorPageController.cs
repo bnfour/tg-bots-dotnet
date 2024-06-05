@@ -1,3 +1,4 @@
+using Bnfour.TgBots.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bnfour.TgBots.Controllers;
@@ -16,6 +17,6 @@ public class ErrorPageController : Controller
     [HttpGet, Route("/status/{statusCode}")]
     public IActionResult DisplayError(int statusCode)
     {
-        return View();
+        return View(new ErrorModel(statusCode));
     }
 }
