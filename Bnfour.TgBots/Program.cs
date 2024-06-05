@@ -68,8 +68,8 @@ AppDomain.CurrentDomain.SetData("DataDirectory", AppContext.BaseDirectory);
 var app = builder.Build();
 
 app.UseStaticFiles();
-
 app.MapControllers();
+app.UseStatusCodePagesWithReExecute("/status/{0}");
 
 app.Lifetime.ApplicationStarted.Register(async () =>
 {
