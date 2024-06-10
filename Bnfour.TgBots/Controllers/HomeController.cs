@@ -13,6 +13,9 @@ public class HomeController(IBotInfoProviderService infoProvider) : Controller
 {
     private readonly IBotInfoProviderService _infoProvider = infoProvider;
 
+    // GET /
+
+    [HttpGet, Route("/")]
     public async Task<IActionResult> Index()
     {
         var model = new HomeModel
@@ -20,5 +23,15 @@ public class HomeController(IBotInfoProviderService infoProvider) : Controller
             Bots = await _infoProvider.GetInfo()
         };
         return View(model);
+    }
+
+    // GET /favicon.ico
+    // returns an almost empty 404 response as opposed to a full blown page
+    // for other errors
+
+    [HttpGet, Route("/favicon.ico"), SkipStatusCodePages]
+    public IActionResult Plain404ForFavicon()
+    {
+        return NotFound("Nothing here");
     }
 }
