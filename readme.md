@@ -113,3 +113,8 @@ Notable changes from `v1.0`:
 - .NET 8 runtime — an LTS one, probably will migrate straight to .NET 10 in the future
 - Webhook URL in config is moved to its own subsection `SharedOptions` from `Options`
 - Probably better architecture
+
+### [v1.2](https://github.com/bnfour/tg-bots-dotnet/tree/v1.2) — error pages
+Small release with a few features ported over from my another Telegram bot project.
+
+The web part now has an (epic) error page to display on non-API GET request errors. The disctinctive lack of a favicon is properly implemented now.
