@@ -352,9 +352,10 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleAboutCommand(long userId)
     {
-        // version is not put through ToMarkdownV2 because the only thing to escape there is a single dot
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+
         await Send(userId, $"""
-        **{Name.ToMarkdownV2()}** {GetVersion()}\.
+        **{Name.ToMarkdownV2()}** {version?.ToDisplayString().ToMarkdownV2() ?? "unversioned somehow"}\.
 
         [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
         by bnfour, 2023–2024\.
@@ -377,23 +378,6 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
             Username = Enabled ? (await _client!.GetMe()).Username : null
         };
     }
-
-    /// <summary>
-    /// Get the app version for about command.
-    /// </summary>
-    /// <returns>The version as a string ready to be put to bot's response,
-    /// with MarkdownV2 formatting and everything.</returns>
-    private static string GetVersion()
-    {
-        var version = Assembly.GetExecutingAssembly().GetName().Version;
-        // dot is escaped for tg's markdown
-        var formattedVersion = $"{version?.Major ?? 0}\\.{version?.Minor ?? 0}";
-        #if DEBUG
-            formattedVersion += " debug";
-        #endif
-        return formattedVersion;
-    }
-
     #endregion
 
 }
