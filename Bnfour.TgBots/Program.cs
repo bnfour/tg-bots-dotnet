@@ -49,7 +49,7 @@ builder.Services.PostConfigure<ApplicationOptions>(appOptions =>
     var optionsToInsert = appOptions.GetType().GetProperties()
         .Select(p => p.GetValue(appOptions))
         .Where(o => o != null && o.GetType().BaseType == typeof(BotOptionsBase))
-        .Select(o => o as BotOptionsBase)
+        .Cast<BotOptionsBase>()
         .Where(o => o != null);
     
     foreach (var option in optionsToInsert)
