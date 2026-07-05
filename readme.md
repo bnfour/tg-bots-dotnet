@@ -1,9 +1,15 @@
-# tg-bots-dotnet
-A suite of small (mostly inline) (and omega useful) bots for Telegram, written in .NET.
+# tg-bots-dotnet (deprecated)
 
-Initially a port and/or an upgrade of an earlier [Python version](https://github.com/bnfour/tg-bots), with a lot of things borrowed from my another .NET Telegram bot, so called [Dotnet Telegram forwarder](https://github.com/bnfour/dotnet-telegram-forwarder). More updates to come?
+>[!CAUTION]
+>This project is no longer actively maintained and/or supported. Use at your own risk.
+>
+>I don't even run Cat macro bot anymore. Ladder bot works until it doesn't.
 
-There's also a very simple status page that shows links to active bots.
+A suite of small (mostly inline) (and _omega_ useful) bots for Telegram, written in .NET.
+
+Initially a port and/or an upgrade of an earlier [Python version](https://github.com/bnfour/tg-bots), with a lot of things borrowed from my another .NET Telegram bot, so called [Dotnet Telegram forwarder](https://github.com/bnfour/dotnet-telegram-forwarder). Deprecated as mostly unused.
+
+There's also a very simple status page that has links to active bots.
 
 ## Ladder bot
 Inline bot that generates texts running along horizontal, vertical and diagonal directions simultaneously for extra expressiveness.
@@ -40,7 +46,12 @@ T         T
 ```
 
 ## Cat macro bot
-Inline bot that can be used to post pictures searchable by defined captions. I use it to store and post cat pictures I used to spam before I moved to Telegram and started spamming stickers.
+Inline bot that can be used to post pictures searchable by defined captions. I've used it to store and post cat pictures I used to spam before I moved to Telegram and started spamming stickers. After some time, sticker spam won; I don't use these macro anymore.
+
+>[!WARNING]
+>This bot is known to stop working after some time (several months to years). Something is probably leaking.
+>
+>You can try to restart the app regularly to "mitigate" this issue (not that is a good fix).
 
 ### Usage
 Querying the bot inline will provide prompts for images with somewhat matching captions from its database for quick posting.
@@ -83,10 +94,6 @@ The rest of the file is generic ASP.NET Core config. Some points are interest ar
 As briefly mentioned in previous section, the app only listens on local address and has no SSL support, which is actually required for a bot backend. It is a deliberate choice to not handle this in the app.  
 For running locally, [ngrok](https://ngrok.com/) is one of the options. For actual hosting, use any decent web server as a reverse proxy; I'm using [nginx](https://nginx.org/) for that.
 
-## Further developments
-nope
-TODO deprecation notice
-
 ## Version history
 ### [v1.0](https://github.com/bnfour/tg-bots-dotnet/tree/v1.0) — dotnet rewrite of a Python script
 The initial release based on the [original Python version](https://github.com/bnfour/tg-bots).
@@ -103,7 +110,12 @@ Notable changes from `v1.0`:
 - Webhook URL in config is moved to its own subsection `SharedOptions` from `Options`
 - Probably better architecture
 
-### [v1.2](https://github.com/bnfour/tg-bots-dotnet/tree/v1.2) — error pages
-Small release with a few features ported over from my another Telegram bot project.
+### [v1.2](https://github.com/bnfour/tg-bots-dotnet/releases/tag/v1.2) — error pages
+Small release (an actual release this time!) with a few features ported over from my another Telegram bot project.
 
 The web part now has an (epic) error page to display on non-API GET request errors. The distinctive lack of a favicon is properly implemented now.
+
+### [v1.2.1](https://github.com/bnfour/tg-bots-dotnet/releases/tag/v1.2.1) — good night sweet prince
+A small refactoring-focused release before deprecation. Migrated to .NET 10, updated NuGet references — the usual. Minor styling updates as well.
+
+This is the last release for this repo.
