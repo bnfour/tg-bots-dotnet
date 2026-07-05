@@ -17,27 +17,15 @@ public class BotFactory(
     ICatMacroBotAdminHelperService catMacroHelper) : IBotFactory, IBotInfoFactory, IBotWebhookFactory
 {
     public IBot? GetBotByToken(string token)
-    {
-        foreach (var bot in EnabledBots())
-        {
-            if (bot.IsToken(token))
-            {
-                return bot;
-            }
-        }
-
-        return null;
-    }
+        => EnabledBots().FirstOrDefault(b => b.IsToken(token));
 
     public IEnumerable<IBotInfo> GetBotInfo()
-    {
-        return AllBots().Cast<IBotInfo>();
-    }
+        => AllBots().Cast<IBotInfo>();
+    
 
     public IEnumerable<IBotWebhook> GetBotWebhooks()
-    {
-        return EnabledBots().Cast<IBotWebhook>();
-    }
+        => EnabledBots().Cast<IBotWebhook>();
+
 
     // _the_ place where the bots are defined
     private IEnumerable<BotBase> AllBots()
