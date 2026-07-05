@@ -358,7 +358,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
         **{Name.ToMarkdownV2()}** {version?.ToDisplayString().ToMarkdownV2() ?? "unversioned somehow"}\.
 
         [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
-        by bnfour, 2023–2024\.
+        by bnfour, 2023–2024, 2026\.
         """);
     }
 
