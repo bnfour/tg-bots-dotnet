@@ -90,7 +90,7 @@ public class CatMacroBot : BotBase
         {
             var results = GenerateResults(inlineQuery.Query);
             // TODO don't forget to update caching after the rewrite
-            await _client!.AnswerInlineQueryAsync(inlineQuery.Id, results,
+            await _client!.AnswerInlineQuery(inlineQuery.Id, results,
                 cacheTime: 360, isPersonal: false);
         }
     }

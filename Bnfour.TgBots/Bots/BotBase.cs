@@ -127,7 +127,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
             ? [UpdateType.Message, UpdateType.InlineQuery]
             : [UpdateType.Message];
 
-        await _client!.SetWebhookAsync(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
+        await _client!.SetWebhook(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
 
     }
 
@@ -138,7 +138,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     {
         ThrowIfNotEnabled();
 
-        await _client!.DeleteWebhookAsync();
+        await _client!.DeleteWebhook();
     }
 
     #endregion
@@ -156,8 +156,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
 
         var chatId = new ChatId(accountId);
 
-        await _client!.SendTextMessageAsync(chatId, message,
-            parseMode: ParseMode.MarkdownV2, disableWebPagePreview: true);
+        await _client!.SendMessage(chatId, message, ParseMode.MarkdownV2);
     }
 
     /// <summary>
@@ -375,7 +374,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
         return new BotInfoModel
         {
             IsOnline = Enabled,
-            Username = Enabled ? (await _client!.GetMeAsync()).Username : null
+            Username = Enabled ? (await _client!.GetMe()).Username : null
         };
     }
 
