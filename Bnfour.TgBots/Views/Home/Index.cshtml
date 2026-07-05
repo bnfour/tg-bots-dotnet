@@ -13,6 +13,7 @@
             <h2>щитпостинг ботс галоре</h2>
             <p>This site hosts @Model.Bots.Count() bnfour's telegram bot@(Model.Bots.Count() == 1 ? "" : "s"). See more info on that on <a href="https://github.com/bnfour/tg-bots-dotnet">GitHub</a>.</p>
             @await Html.PartialAsync("_BotList.cshtml", Model.Bots)
+            <p class="version">@Model.Version</p>
         </div>
     </body>
 </html>

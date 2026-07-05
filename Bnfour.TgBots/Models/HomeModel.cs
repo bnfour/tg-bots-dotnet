@@ -1,3 +1,7 @@
+using System.Reflection;
+
+using Bnfour.TgBots.Extensions;
+
 namespace Bnfour.TgBots.Models;
 /// <summary>
 /// Model for the "landing" page. Only holds some info about the bots.
@@ -9,4 +13,7 @@ public class HomeModel
     /// whether or not it's set as an active bot.
     /// </summary>
     public required IEnumerable<BotInfoModel> Bots { get; set; }
+
+    public string Version =>
+        Assembly.GetExecutingAssembly().GetName().Version?.ToDisplayString() ?? "no version";
 }

@@ -51,6 +51,10 @@ p {
     text-align: center;
 }
 
+p.version {
+    font-size: small;
+}
+
 .bot-list {
     display: flex;
     flex-direction: row;
@@ -62,7 +66,7 @@ p {
     margin: 0 1em;
 }
 
-.bot-list > span.disabled {
+.bot-list > span.disabled, p.version {
     opacity: 0.7;
 }
 
