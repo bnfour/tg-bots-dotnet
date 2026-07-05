@@ -9,11 +9,10 @@ namespace Bnfour.TgBots.Services;
 /// <param name="factory">Factory to get bot instances to manage from.</param>
 public class BotWebhookManagerService(IBotWebhookFactory factory) : IBotWebhookManagerService
 {
-    private readonly IBotWebhookFactory _factory = factory;
 
     public async Task RemoveWebhooks()
     {
-        foreach (var bot in _factory.GetBotWebhooks())
+        foreach (var bot in factory.GetBotWebhooks())
         {
             await bot.RemoveWebhook();
         }
@@ -21,7 +20,7 @@ public class BotWebhookManagerService(IBotWebhookFactory factory) : IBotWebhookM
 
     public async Task SetWebhooks()
     {
-        foreach (var bot in _factory.GetBotWebhooks())
+        foreach (var bot in factory.GetBotWebhooks())
         {
             await bot.SetWebhook();
         }

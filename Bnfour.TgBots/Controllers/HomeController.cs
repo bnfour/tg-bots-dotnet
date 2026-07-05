@@ -11,7 +11,6 @@ namespace Bnfour.TgBots.Controllers;
 /// </summary>
 public class HomeController(IBotInfoProviderService infoProvider) : Controller
 {
-    private readonly IBotInfoProviderService _infoProvider = infoProvider;
 
     // GET /
 
@@ -20,7 +19,7 @@ public class HomeController(IBotInfoProviderService infoProvider) : Controller
     {
         var model = new HomeModel
         {
-            Bots = await _infoProvider.GetInfo()
+            Bots = await infoProvider.GetInfo()
         };
         return View(model);
     }

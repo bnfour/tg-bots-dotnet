@@ -10,12 +10,10 @@ namespace Bnfour.TgBots.Services;
 /// <param name="factory">Factory to provide bot instances to get info from.</param>
 public class BotInfoProviderService(IBotInfoFactory factory) : IBotInfoProviderService
 {
-    private readonly IBotInfoFactory _factory = factory;
-
     public async Task<IEnumerable<BotInfoModel>> GetInfo()
     {
         var ret = new List<BotInfoModel>();
-        foreach (var bot in _factory.GetBotInfo())
+        foreach (var bot in factory.GetBotInfo())
         {
             var info = await bot.GetModel();
             ret.Add(info);

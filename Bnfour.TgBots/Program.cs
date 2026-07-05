@@ -28,7 +28,7 @@ builder.Services.AddScoped<IBotWebhookFactory, BotFactory>();
 
 builder.Services.AddScoped<IBotInfoProviderService, BotInfoProviderService>();
 builder.Services.AddScoped<IBotWebhookManagerService, BotWebhookManagerService>();
-builder.Services.AddScoped<IUpdateHandlerService, UpdateHanderService>();
+builder.Services.AddScoped<IUpdateHandlerService, UpdateHandlerService>();
 
 // we're going to overengineer to be "futureproof"
 // (and also to look even more like an enterprise-ready hello world app)
