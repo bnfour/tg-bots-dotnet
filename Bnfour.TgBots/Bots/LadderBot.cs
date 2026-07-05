@@ -94,7 +94,7 @@ public class LadderBot : BotBase
     /// <summary>
     /// Description for a generated result without spaces.
     /// </summary>
-    private const string NoSpacesDescription = "Uselful for long strings.";
+    private const string NoSpacesDescription = "Useful for long strings.";
 
     /// <summary>
     /// Relative URL of a thumbnail for a generated result without spaces.

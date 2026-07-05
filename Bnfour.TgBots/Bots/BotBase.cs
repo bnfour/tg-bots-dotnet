@@ -94,7 +94,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     }
 
     /// <summary>
-    /// Checks whether passed string is an actual bot token to verify the request actully comes from Telegram backend.
+    /// Checks whether passed string is an actual bot token to verify the request actually comes from Telegram backend.
     /// </summary>
     /// <param name="givenToken">Token received from request.</param>
     /// <returns>True for actual token, false otherwise.</returns>
@@ -146,7 +146,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     #region message handling
 
     /// <summary>
-    /// Sends a message, formated in MarkdownV2. See https://core.telegram.org/bots/api#markdownv2-style
+    /// Sends a message, formatted in MarkdownV2. See https://core.telegram.org/bots/api#markdownv2-style
     /// </summary>
     /// <param name="accountId">ID of the user to send message to.</param>
     /// <param name="message">Message to send, in MarkdownV2.</param>
@@ -210,7 +210,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
             // TODO other message types
             // all unsupported types are treated as an unrecognized text
             default:
-                await ReplyToArbitaryText(message.From.Id);
+                await ReplyToArbitraryText(message.From.Id);
                 break;
         }
     }
@@ -231,7 +231,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     /// <param name="message">Message with images.</param>
     protected virtual async Task HandlePhoto(Message message)
     {
-        await ReplyToArbitaryText(message.From!.Id);
+        await ReplyToArbitraryText(message.From!.Id);
     }
 
     #region text and commands handling
@@ -251,7 +251,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
         }
         else
         {
-            await ReplyToArbitaryText(message.From!.Id);
+            await ReplyToArbitraryText(message.From!.Id);
         }
     }
 
@@ -307,7 +307,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     /// The message is set in <see cref="UnknownTextResponse"/>.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
-    protected async Task ReplyToArbitaryText(long userId)
+    protected async Task ReplyToArbitraryText(long userId)
     {
         await Send(userId, UnknownTextResponse);
     }
