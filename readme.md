@@ -83,20 +83,9 @@ The rest of the file is generic ASP.NET Core config. Some points are interest ar
 As briefly mentioned in previous section, the app only listens on local address and has no SSL support, which is actually required for a bot backend. It is a deliberate choice to not handle this in the app.  
 For running locally, [ngrok](https://ngrok.com/) is one of the options. For actual hosting, use any decent web server as a reverse proxy; I'm using [nginx](https://nginx.org/) for that.
 
-## Futher developments
-Very tentative.
-
-### New version (and name) for Cat macro bot
-Current version is just a rewrite of Python version. There are plans to:
-- allow to store media other than images, searchable by type as well
-- make media collections per user, accessible only by the user
-- make user registration limited similar to dotnet-telegram-forwarder
-- rename it to something new to signify it can do more that (cat) pictures now
-
-### New bot(s) (?)
-This whole "take a _mostly_ working app and make it from scratch one more time on another stack" started because I was tinkering with original version to make another bot to use in my chats. While doing that, I thought that the architecture could be better and so decided to make a .NET version as I'm more comfortable with it.  
-
-There's no new bots, but we're getting there, at least the architecture was fixed ╭( ･ㅂ･)و
+## Further developments
+nope
+TODO deprecation notice
 
 ## Version history
 ### [v1.0](https://github.com/bnfour/tg-bots-dotnet/tree/v1.0) — dotnet rewrite of a Python script
@@ -117,4 +106,4 @@ Notable changes from `v1.0`:
 ### [v1.2](https://github.com/bnfour/tg-bots-dotnet/tree/v1.2) — error pages
 Small release with a few features ported over from my another Telegram bot project.
 
-The web part now has an (epic) error page to display on non-API GET request errors. The disctinctive lack of a favicon is properly implemented now.
+The web part now has an (epic) error page to display on non-API GET request errors. The distinctive lack of a favicon is properly implemented now.
