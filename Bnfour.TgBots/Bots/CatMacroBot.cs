@@ -14,7 +14,9 @@ namespace Bnfour.TgBots.Bots;
 
 /// <summary>
 /// Bot that stores a collection of images searchable by their captions.
+/// Not run or tested anymore, use at your own risk.
 /// </summary>
+[Obsolete("Leaks something and stops working after a while. Consider regular restarts if you're going to use it ¯\\_(ツ)_/¯")]
 public class CatMacroBot : BotBase
 {
     #region configuration
