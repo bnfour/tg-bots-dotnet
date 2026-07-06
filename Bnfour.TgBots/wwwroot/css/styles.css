@@ -1,37 +1,13 @@
-:root {
-    --bg: #fff;
-    --bg-accent: #bbb;
-    --fg: #000;
-
-    --font-mono: 'Iosevka', 'Consolas', monospace, Courier;
-    --font-default: 'Noto Sans', 'Droid Sans', Helvetica, Arial, sans-serif;
-}
-
-html {
-    width: 100%;
-}
-
-body {
-    /* centers the wrapper horizontally */
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-    font-family: var(--font-default);
-    color: var(--fg);
-    background-color: var(--bg);
-}
-
 .wrapper {
     display: flex;
     flex-direction: column;
 
     min-width: 600px;
     max-width: 45%;
-}
 
-.wrapper > h1, h2, img {
-    align-self: center;
+    & > h1, > h2, > img {
+        align-self: center;
+    }
 }
 
 h1, h2 {
@@ -89,12 +65,6 @@ p.version {
 
 /* dark mode */
 @media (prefers-color-scheme: dark) {
-    :root {
-        --bg: #333;
-        --bg-accent: #222;
-        --fg: #ccc;
-    }
-
     a:link {
         color: #a0a0ff;
     }

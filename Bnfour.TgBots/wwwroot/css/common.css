@@ -1,0 +1,29 @@
+:root {
+    --bg: #fff;
+    --fg: #000;
+
+    --font-mono: 'Iosevka', 'Consolas', monospace, Courier;
+    --font-default: 'Noto Sans', 'Droid Sans', Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #333;
+        --fg: #ccc;
+    }
+}
+
+html {
+    width: 100%;
+}
+
+body {
+    /* centers the wrapper horizontally */
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    font-family: var(--font-default);
+    color: var(--fg);
+    background-color: var(--bg);
+}
