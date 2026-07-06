@@ -13,5 +13,5 @@ public abstract class BotOptionsBase
     // it is a field instead of property because the value is not loaded directly
     // from the options JSON, but rather supplied in post-configuration stage
     // from another source
-    public required string? WebhookUrl;
+    public string? WebhookUrl;
 }

@@ -55,7 +55,7 @@ builder.Services.PostConfigure<ApplicationOptions>(appOptions =>
     foreach (var option in optionsToInsert)
     {
         // it is explicitly null-checked above
-        option!.WebhookUrl = sharedValue;
+        option.WebhookUrl = sharedValue;
     }
 });
 

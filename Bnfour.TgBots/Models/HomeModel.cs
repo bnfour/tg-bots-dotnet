@@ -4,7 +4,7 @@ using Bnfour.TgBots.Extensions;
 
 namespace Bnfour.TgBots.Models;
 /// <summary>
-/// Model for the "landing" page. Only holds some info about the bots.
+/// Model for the "landing" page.
 /// </summary>
 public class HomeModel
 {

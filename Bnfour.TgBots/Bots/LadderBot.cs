@@ -11,16 +11,17 @@ namespace Bnfour.TgBots.Bots;
 /// <summary>
 /// Bot that generates texts running along horizontal, vertical and diagonal directions.
 /// </summary>
-public class LadderBot : BotBase
+/// <param name="options">Bot-specific options.</param>
+public class LadderBot(LadderBotOptions options) : BotBase(options)
 {
+    #region configuration
+
     /// <summary>
     /// Base url for the images for the generated inline responses.
     /// Matches the global index, relative image URLs are appended.
     /// See <see cref="SpacesThumbUrl"/> and <see cref="NoSpacesThumbUrl"/>.
     /// </summary>
-    private readonly string _webIndex;
-
-    #region configuration
+    private readonly string _webIndex = options.WebhookUrl!;
 
     protected override bool Inline => true;
 
@@ -107,16 +108,6 @@ public class LadderBot : BotBase
     private const int ThumbSize = 128;
 
     #endregion
-
-    /// <summary>
-    /// Constructor. Sets the index URL for the button images.
-    /// </summary>
-    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
-    /// <param name="options">Bot-specific options.</param>
-    public LadderBot(LadderBotOptions options) : base(options)
-    {
-        _webIndex = options.WebhookUrl!;
-    }
 
     protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {

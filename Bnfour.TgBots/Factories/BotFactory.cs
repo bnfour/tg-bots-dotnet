@@ -27,7 +27,7 @@ public class BotFactory(
         => EnabledBots().Cast<IBotWebhook>();
 
 
-    // _the_ place where the bots are defined
+    // _the_ place where bots are defined
     private IEnumerable<BotBase> AllBots()
     {
         yield return new LadderBot(options.Value.LadderBotOptions);

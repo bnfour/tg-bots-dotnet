@@ -244,7 +244,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     {
         var text = message.Text ?? string.Empty;
 
-        if (text.StartsWith("/"))
+        if (text.StartsWith('/'))
         {
             // message.From is null-checked before calling this method
             await HandleCommand(message.From!.Id, text);
