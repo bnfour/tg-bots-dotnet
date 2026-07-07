@@ -11,8 +11,7 @@ using Microsoft.EntityFrameworkCore;
 // this is way more convoluted than i had imagined
 
 var builder = WebApplication.CreateBuilder(args);
-// we need to explicitly add NewtonsoftJson to parse webhook payloads
-builder.Services.AddControllersWithViews().AddNewtonsoftJson();
+builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Options"));
 
