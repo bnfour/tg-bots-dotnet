@@ -186,10 +186,10 @@ public class LadderBot(LadderBotOptions options) : BotBase(options)
     /// <returns>String, safe to use in <see cref="GenerateLadder"/>.</returns>
     private string Normalize(string input)
     {
-        input = input.Replace('\n', ' ').Replace('\r', ' ');
-        input = input.Replace("`", "` ");
-        input = input.Trim();
-        return input.ToUpper();
+        return input.Replace('\n', ' ').Replace('\r', ' ')
+            .Replace("`", "` ")
+            .Trim()
+            .ToUpper();
     }
 
     /// <summary>

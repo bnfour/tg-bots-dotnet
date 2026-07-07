@@ -156,7 +156,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
 
         var chatId = new ChatId(accountId);
 
-        await _client!.SendMessage(chatId, message, ParseMode.MarkdownV2);
+        await _client!.SendMessage(chatId, message, ParseMode.MarkdownV2, linkPreviewOptions: new() { IsDisabled = true });
     }
 
     /// <summary>
