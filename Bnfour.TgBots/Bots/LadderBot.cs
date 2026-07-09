@@ -161,14 +161,14 @@ public class LadderBot(LadderBotOptions options) : BotBase(options)
 
         return
         [
-            new InlineQueryResultArticle(Guid.NewGuid().ToString(), SpacesTitle, spacesContent)
+            new InlineQueryResultArticle("spaces", SpacesTitle, spacesContent)
             {
                 Description = SpacesDescription,
                 ThumbnailUrl = _webIndex.TrimEnd('/') + SpacesThumbUrl,
                 ThumbnailHeight = ThumbSize,
                 ThumbnailWidth = ThumbSize
             },
-            new InlineQueryResultArticle(Guid.NewGuid().ToString(), NoSpacesTitle, noSpacesContent)
+            new InlineQueryResultArticle("nospaces", NoSpacesTitle, noSpacesContent)
             {
                 Description = NoSpacesDescription,
                 ThumbnailUrl = _webIndex.TrimEnd('/') + NoSpacesThumbUrl,
