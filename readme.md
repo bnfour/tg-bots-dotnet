@@ -118,6 +118,13 @@ The web part now has an (epic) error page to display on non-API GET request erro
 ### [v1.2.1](https://github.com/bnfour/tg-bots-dotnet/releases/tag/v1.2.1) — good night sweet prince
 A small refactoring-focused release before deprecation.
 
-Migrated to .NET 10, updated NuGet references — the usual. Minor styling updates as well.
+Notable changes include:
+- Moved to latest LTS runtime, .NET 10
+- Updated used references, code updated to match new APIs
+- `CatMacroBot` marked as obsolete
+- Optimized SVGs, CSSs; HTML pages are now a bit more standards-complying
+- Slightly better code
+- Fixed some typos
+- No longer uses brand new GUIDs every time where unnecessary, saving entropy
 
 This is the last release for this repo.
