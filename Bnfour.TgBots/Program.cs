@@ -11,8 +11,7 @@ using Microsoft.EntityFrameworkCore;
 // this is way more convoluted than i had imagined
 
 var builder = WebApplication.CreateBuilder(args);
-// we need to explicitly add NewtonsoftJson to parse webhook payloads
-builder.Services.AddControllersWithViews().AddNewtonsoftJson();
+builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Options"));
 
@@ -28,7 +27,7 @@ builder.Services.AddScoped<IBotWebhookFactory, BotFactory>();
 
 builder.Services.AddScoped<IBotInfoProviderService, BotInfoProviderService>();
 builder.Services.AddScoped<IBotWebhookManagerService, BotWebhookManagerService>();
-builder.Services.AddScoped<IUpdateHandlerService, UpdateHanderService>();
+builder.Services.AddScoped<IUpdateHandlerService, UpdateHandlerService>();
 
 // we're going to overengineer to be "futureproof"
 // (and also to look even more like an enterprise-ready hello world app)
@@ -49,13 +48,13 @@ builder.Services.PostConfigure<ApplicationOptions>(appOptions =>
     var optionsToInsert = appOptions.GetType().GetProperties()
         .Select(p => p.GetValue(appOptions))
         .Where(o => o != null && o.GetType().BaseType == typeof(BotOptionsBase))
-        .Select(o => o as BotOptionsBase)
+        .Cast<BotOptionsBase>()
         .Where(o => o != null);
     
     foreach (var option in optionsToInsert)
     {
         // it is explicitly null-checked above
-        option!.WebhookUrl = sharedValue;
+        option.WebhookUrl = sharedValue;
     }
 });
 

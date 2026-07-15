@@ -12,7 +12,6 @@ namespace Bnfour.TgBots.Controllers;
 /// </summary>
 public class TelegramApiController(IUpdateHandlerService service) : Controller
 {
-    private readonly IUpdateHandlerService _service = service;
 
     // POST /{bot token}
 
@@ -29,7 +28,7 @@ public class TelegramApiController(IUpdateHandlerService service) : Controller
     {
         try
         {
-            await _service.HandleUpdate(token, update);
+            await service.HandleUpdate(token, update);
             return Ok();
         }
         catch (NoSuchTokenException)

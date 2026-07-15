@@ -1,37 +1,13 @@
-:root {
-    --bg: #fff;
-    --bg-accent: #bbb;
-    --fg: #000;
-
-    --font-mono: 'Iosevka', 'Consolas', monospace, Courier;
-    --font-default: 'Noto Sans', 'Droid Sans', Helvetica, Arial, sans-serif;
-}
-
-html {
-    width: 100%;
-}
-
-body {
-    /* centers the wrapper horizontally */
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-    font-family: var(--font-default);
-    color: var(--fg);
-    background-color: var(--bg);
-}
-
 .wrapper {
     display: flex;
     flex-direction: column;
 
     min-width: 600px;
     max-width: 45%;
-}
 
-.wrapper > h1, h2, img {
-    align-self: center;
+    & > h1, > h2, > img {
+        align-self: center;
+    }
 }
 
 h1, h2 {
@@ -51,29 +27,44 @@ p {
     text-align: center;
 }
 
+p.version {
+    font-size: small;
+}
+
 .bot-list {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
 }
 
-.bot-list > span {
+.bot-list > * {
     margin: 0 1em;
 }
 
-.bot-list > span.disabled {
+.bot-list > span.disabled, p.version {
     opacity: 0.7;
+}
+
+@keyframes clueing {
+    0% { transform: rotate(0); }
+    25% { transform: rotate(30deg); }
+    50% { transform: rotate(0); }
+    75% { transform: rotate(-30deg); }
+    100% { transform: rotate(0); }
+}
+
+#surely {
+    animation: clueing 1s linear paused infinite;
+
+    &:hover {
+        animation-play-state: running;
+    }
 }
 
 /* dark mode */
 @media (prefers-color-scheme: dark) {
-    :root {
-        --bg: #333;
-        --bg-accent: #222;
-        --fg: #ccc;
-    }
-
     a:link {
         color: #a0a0ff;
     }

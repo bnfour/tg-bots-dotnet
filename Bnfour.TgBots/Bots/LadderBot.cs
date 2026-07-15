@@ -11,16 +11,17 @@ namespace Bnfour.TgBots.Bots;
 /// <summary>
 /// Bot that generates texts running along horizontal, vertical and diagonal directions.
 /// </summary>
-public class LadderBot : BotBase
+/// <param name="options">Bot-specific options.</param>
+public class LadderBot(LadderBotOptions options) : BotBase(options)
 {
+    #region configuration
+
     /// <summary>
     /// Base url for the images for the generated inline responses.
     /// Matches the global index, relative image URLs are appended.
     /// See <see cref="SpacesThumbUrl"/> and <see cref="NoSpacesThumbUrl"/>.
     /// </summary>
-    private readonly string _webIndex;
-
-    #region configuration
+    private readonly string _webIndex = options.WebhookUrl!;
 
     protected override bool Inline => true;
 
@@ -94,7 +95,7 @@ public class LadderBot : BotBase
     /// <summary>
     /// Description for a generated result without spaces.
     /// </summary>
-    private const string NoSpacesDescription = "Uselful for long strings.";
+    private const string NoSpacesDescription = "Useful for long strings.";
 
     /// <summary>
     /// Relative URL of a thumbnail for a generated result without spaces.
@@ -107,16 +108,6 @@ public class LadderBot : BotBase
     private const int ThumbSize = 128;
 
     #endregion
-
-    /// <summary>
-    /// Constructor. Sets the index URL for the button images.
-    /// </summary>
-    /// <param name="webhookIndex">Common part of the webhook endpoint path, shared between bots.</param>
-    /// <param name="options">Bot-specific options.</param>
-    public LadderBot(LadderBotOptions options) : base(options)
-    {
-        _webIndex = options.WebhookUrl!;
-    }
 
     protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {
@@ -145,7 +136,7 @@ public class LadderBot : BotBase
         if (!string.IsNullOrEmpty(inlineQuery.Query) && inlineQuery.Query.Length > 0)
         {
             var results = GenerateResults(inlineQuery.Query);
-            await _client!.AnswerInlineQueryAsync(inlineQuery.Id, results,
+            await _client!.AnswerInlineQuery(inlineQuery.Id, results,
                 cacheTime: 3600, isPersonal: false);
         }
     }
@@ -170,14 +161,14 @@ public class LadderBot : BotBase
 
         return
         [
-            new InlineQueryResultArticle(Guid.NewGuid().ToString(), SpacesTitle, spacesContent)
+            new InlineQueryResultArticle("spaces", SpacesTitle, spacesContent)
             {
                 Description = SpacesDescription,
                 ThumbnailUrl = _webIndex.TrimEnd('/') + SpacesThumbUrl,
                 ThumbnailHeight = ThumbSize,
                 ThumbnailWidth = ThumbSize
             },
-            new InlineQueryResultArticle(Guid.NewGuid().ToString(), NoSpacesTitle, noSpacesContent)
+            new InlineQueryResultArticle("nospaces", NoSpacesTitle, noSpacesContent)
             {
                 Description = NoSpacesDescription,
                 ThumbnailUrl = _webIndex.TrimEnd('/') + NoSpacesThumbUrl,
@@ -195,10 +186,10 @@ public class LadderBot : BotBase
     /// <returns>String, safe to use in <see cref="GenerateLadder"/>.</returns>
     private string Normalize(string input)
     {
-        input = input.Replace('\n', ' ').Replace('\r', ' ');
-        input = input.Replace("`", "` ");
-        input = input.Trim();
-        return input.ToUpper();
+        return input.Replace('\n', ' ').Replace('\r', ' ')
+            .Replace("`", "` ")
+            .Trim()
+            .ToUpper();
     }
 
     /// <summary>

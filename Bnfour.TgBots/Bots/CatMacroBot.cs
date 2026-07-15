@@ -14,8 +14,14 @@ namespace Bnfour.TgBots.Bots;
 
 /// <summary>
 /// Bot that stores a collection of images searchable by their captions.
+/// Not run or tested anymore, use at your own risk.
 /// </summary>
-public class CatMacroBot : BotBase
+/// <param name="options">Bot-specific options. Includes list of its admins.</param>
+/// <param name="context">Database context to use.</param>
+/// <param name="adminHelper">Helper service with persistent state to use.</param>
+[Obsolete("Leaks something and stops working after a while. Consider regular restarts if you're going to use it ¯\\_(ツ)_/¯")]
+public class CatMacroBot(CatMacroBotOptions options, CatMacroBotContext context,
+    ICatMacroBotAdminHelperService adminHelper) : BotBase(options)
 {
     #region configuration
 
@@ -42,13 +48,7 @@ public class CatMacroBot : BotBase
 
     If you're my admin, you already know how to manage me.
 
-    """.ToMarkdownV2()
-    +
-    // ToMarkdownV2 can't be used if the text also contains formatting as it'll just escape all of it,
-    // so this is formatted by hand
-    """
-    **Important note:** there are plans to completely redo this bot to make _media_ collections per user, rather than single global _image_ collection\. Stay tuned\. Or not\.
-    """;
+    """.ToMarkdownV2();
 
     protected override string StartResponse => """
     Hi there!
@@ -57,29 +57,6 @@ public class CatMacroBot : BotBase
     """.ToMarkdownV2();
 
     #endregion
-
-    /// <summary>
-    /// Database context to use.
-    /// </summary>
-    private readonly CatMacroBotContext _context;
-
-    /// <summary>
-    /// Currently enabled mode per admin account.
-    /// </summary>
-    private readonly ICatMacroBotAdminHelperService _adminHelper;
-
-    /// <summary>
-    /// Constructor.
-    /// </summary>
-    /// <param name="options">Bot-specific options. Includes list of its admins.</param>
-    /// <param name="context">Database context to use.</param>
-    /// <param name="adminHelper">Helper service with persistent state to use.</param>
-    public CatMacroBot(CatMacroBotOptions options, CatMacroBotContext context, ICatMacroBotAdminHelperService adminHelper)
-        : base(options)
-    {
-        _context = context;
-        _adminHelper = adminHelper;
-    }
 
     protected override async Task HandleInlineQuery(InlineQuery inlineQuery)
     {
@@ -90,7 +67,7 @@ public class CatMacroBot : BotBase
         {
             var results = GenerateResults(inlineQuery.Query);
             // TODO don't forget to update caching after the rewrite
-            await _client!.AnswerInlineQueryAsync(inlineQuery.Id, results,
+            await _client!.AnswerInlineQuery(inlineQuery.Id, results,
                 cacheTime: 360, isPersonal: false);
         }
     }
@@ -104,7 +81,7 @@ public class CatMacroBot : BotBase
     {
         // i tried to avoid materializing full image data in this method
 
-        var captions = _context.Images.Select(i => i.Caption);
+        var captions = context.Images.Select(i => i.Caption);
 
         // processing string to itself `(s) => s` is needed to support non-English characters,
         // as the default processor replaces anything matching [^ a-zA-Z0-9] with whitespaces
@@ -112,7 +89,7 @@ public class CatMacroBot : BotBase
             limit: MaxResults, cutoff: SimilarityCutoff)
             .Select(sr => sr.Value);
 
-        return _context.Images
+        return context.Images
             .Where(i => searchResults.Contains(i.Caption))
             .Select(i => new InlineQueryResultCachedPhoto(i.Id.ToString(), i.FileId));
     }
@@ -131,11 +108,11 @@ public class CatMacroBot : BotBase
             throw new NoRequiredDataException("Message.Photo");
         }
 
-        if (_adminHelper.AdminStatus[fromId] == CatMacroBotAdminStatus.Normal)
+        if (adminHelper.AdminStatus[fromId] == CatMacroBotAdminStatus.Normal)
         {
             await AddImage(message);
         }
-        else if (_adminHelper.AdminStatus[fromId] == CatMacroBotAdminStatus.Deletion)
+        else if (adminHelper.AdminStatus[fromId] == CatMacroBotAdminStatus.Deletion)
         {
             await RemoveImage(message);
         }
@@ -163,9 +140,9 @@ public class CatMacroBot : BotBase
             throw new NoRequiredDataException("Message.Photo.FileId and/or Message.Photo.FileUniqueId");
         }
         // duplicate checks
-        if (_context.Images.Any(i => i.FileUniqueId == fileUniqueId))
+        if (context.Images.Any(i => i.FileUniqueId == fileUniqueId))
         {
-            var existingCaption = _context.Images.First(i => i.FileUniqueId == fileUniqueId).Caption;
+            var existingCaption = context.Images.First(i => i.FileUniqueId == fileUniqueId).Caption;
             await Send(fromId, $"Error: duplicate image! Already saved as \"{existingCaption}\"".ToMarkdownV2());
             return;
         }
@@ -178,7 +155,7 @@ public class CatMacroBot : BotBase
             await Send(fromId, ("Please provide a caption!" + adviceFriend).ToMarkdownV2());
             return;
         }
-        if (_context.Images.Any(i => i.Caption == message.Caption))
+        if (context.Images.Any(i => i.Caption == message.Caption))
         {
             await Send(fromId, $"Error: duplicate caption \"{message.Caption}\"!".ToMarkdownV2());
             return;
@@ -192,8 +169,8 @@ public class CatMacroBot : BotBase
             FileUniqueId = fileUniqueId
         };
 
-        await _context.Images.AddAsync(newMacro);
-        await _context.SaveChangesAsync();
+        await context.Images.AddAsync(newMacro);
+        await context.SaveChangesAsync();
         await Send(fromId, "OK! ('-^)b".ToMarkdownV2());
     }
 
@@ -217,7 +194,7 @@ public class CatMacroBot : BotBase
             throw new NoRequiredDataException("Message.Photo.FileUniqueId");
         }
 
-        var toRemove = _context.Images.SingleOrDefault(i => i.FileUniqueId == fileUniqueId);
+        var toRemove = context.Images.SingleOrDefault(i => i.FileUniqueId == fileUniqueId);
 
         if (toRemove == null)
         {
@@ -225,10 +202,10 @@ public class CatMacroBot : BotBase
             return;
         }
 
-        _context.Remove(toRemove);
-        await _context.SaveChangesAsync();
+        context.Remove(toRemove);
+        await context.SaveChangesAsync();
         
-        _adminHelper.AdminStatus[fromId] = CatMacroBotAdminStatus.Normal;
+        adminHelper.AdminStatus[fromId] = CatMacroBotAdminStatus.Normal;
 
         await Send(fromId, "Removal OK! ('-^)b".ToMarkdownV2());
     }
@@ -238,7 +215,7 @@ public class CatMacroBot : BotBase
     /// </summary>
     /// <param name="id">ID to check.</param>
     /// <returns>True if the user is an admin, false otherwise.</returns>
-    private bool IsAdmin(long id) => _adminHelper.AdminStatus.ContainsKey(id);
+    private bool IsAdmin(long id) => adminHelper.AdminStatus.ContainsKey(id);
 
     protected override async Task<bool> TryToFindAndRunCommand(string command, long userId, string fullText)
     {
@@ -270,13 +247,13 @@ public class CatMacroBot : BotBase
     /// <param name="userId">ID of the user who sent the command to reply to.</param>
     private async Task HandleDelete(long userId)
     {
-        if (_adminHelper.AdminStatus[userId] == CatMacroBotAdminStatus.Deletion)
+        if (adminHelper.AdminStatus[userId] == CatMacroBotAdminStatus.Deletion)
         {
             await Send(userId, "You're already in deletion mode!".ToMarkdownV2());
         }
         else
         {
-            _adminHelper.AdminStatus[userId] = CatMacroBotAdminStatus.Deletion;
+            adminHelper.AdminStatus[userId] = CatMacroBotAdminStatus.Deletion;
             await Send(userId, "Deletion mode activated! Forward or query the image you want to remove, or /cancel".ToMarkdownV2());
         }
     }
@@ -288,13 +265,13 @@ public class CatMacroBot : BotBase
     /// <param name="userId">ID of the user who sent the command to reply to.</param>
     private async Task HandleCancel(long userId)
     {
-        if (_adminHelper.AdminStatus[userId] == CatMacroBotAdminStatus.Normal)
+        if (adminHelper.AdminStatus[userId] == CatMacroBotAdminStatus.Normal)
         {
             await Send(userId, "You've nothing to cancel!".ToMarkdownV2());
         }
         else
         {
-            _adminHelper.AdminStatus[userId] = CatMacroBotAdminStatus.Normal;
+            adminHelper.AdminStatus[userId] = CatMacroBotAdminStatus.Normal;
             await Send(userId, "Deletion mode cancelled! Image adding mode active!".ToMarkdownV2());
         }
     }

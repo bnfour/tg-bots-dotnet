@@ -6,14 +6,12 @@ namespace Bnfour.TgBots.Contexts;
 /// <summary>
 /// Database context for the cat macro bot.
 /// </summary>
-public class CatMacroBotContext : DbContext
+public class CatMacroBotContext(DbContextOptions<CatMacroBotContext> options) : DbContext(options)
 {
     /// <summary>
     /// The database set.
     /// </summary>
     public required DbSet<CatMacro> Images { get; set; }
-
-    public CatMacroBotContext(DbContextOptions<CatMacroBotContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

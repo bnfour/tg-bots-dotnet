@@ -73,10 +73,10 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     #endregion
 
     /// <summary>
-    /// If set to false, the bot is not available and will throw on API usage.
+    /// If false, the bot is not available and will throw on API usage.
     /// Checking for this is supposed to be caller's responsibility.
     /// </summary>
-    public bool Enabled => _client != null || _webhookUrl != null;
+    public bool Enabled => _client != null && _webhookUrl != null;
 
     /// <summary>
     /// Constructor.
@@ -94,7 +94,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     }
 
     /// <summary>
-    /// Checks whether passed string is an actual bot token to verify the request actully comes from Telegram backend.
+    /// Checks whether passed string is an actual bot token to verify the request actually comes from Telegram backend.
     /// </summary>
     /// <param name="givenToken">Token received from request.</param>
     /// <returns>True for actual token, false otherwise.</returns>
@@ -127,7 +127,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
             ? [UpdateType.Message, UpdateType.InlineQuery]
             : [UpdateType.Message];
 
-        await _client!.SetWebhookAsync(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
+        await _client!.SetWebhook(_webhookUrl!, allowedUpdates: allowedUpdateTypes);
 
     }
 
@@ -138,7 +138,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     {
         ThrowIfNotEnabled();
 
-        await _client!.DeleteWebhookAsync();
+        await _client!.DeleteWebhook();
     }
 
     #endregion
@@ -146,7 +146,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     #region message handling
 
     /// <summary>
-    /// Sends a message, formated in MarkdownV2. See https://core.telegram.org/bots/api#markdownv2-style
+    /// Sends a message, formatted in MarkdownV2. See https://core.telegram.org/bots/api#markdownv2-style
     /// </summary>
     /// <param name="accountId">ID of the user to send message to.</param>
     /// <param name="message">Message to send, in MarkdownV2.</param>
@@ -156,8 +156,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
 
         var chatId = new ChatId(accountId);
 
-        await _client!.SendTextMessageAsync(chatId, message,
-            parseMode: ParseMode.MarkdownV2, disableWebPagePreview: true);
+        await _client!.SendMessage(chatId, message, ParseMode.MarkdownV2, linkPreviewOptions: new() { IsDisabled = true });
     }
 
     /// <summary>
@@ -211,7 +210,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
             // TODO other message types
             // all unsupported types are treated as an unrecognized text
             default:
-                await ReplyToArbitaryText(message.From.Id);
+                await ReplyToArbitraryText(message.From.Id);
                 break;
         }
     }
@@ -232,7 +231,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     /// <param name="message">Message with images.</param>
     protected virtual async Task HandlePhoto(Message message)
     {
-        await ReplyToArbitaryText(message.From!.Id);
+        await ReplyToArbitraryText(message.From!.Id);
     }
 
     #region text and commands handling
@@ -245,14 +244,14 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     {
         var text = message.Text ?? string.Empty;
 
-        if (text.StartsWith("/"))
+        if (text.StartsWith('/'))
         {
             // message.From is null-checked before calling this method
             await HandleCommand(message.From!.Id, text);
         }
         else
         {
-            await ReplyToArbitaryText(message.From!.Id);
+            await ReplyToArbitraryText(message.From!.Id);
         }
     }
 
@@ -308,7 +307,7 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     /// The message is set in <see cref="UnknownTextResponse"/>.
     /// </summary>
     /// <param name="userId">ID of the user to send the message to.</param>
-    protected async Task ReplyToArbitaryText(long userId)
+    protected async Task ReplyToArbitraryText(long userId)
     {
         await Send(userId, UnknownTextResponse);
     }
@@ -353,12 +352,13 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     /// <param name="userId">ID of the user to send the message to.</param>
     protected async Task HandleAboutCommand(long userId)
     {
-        // version is not put through ToMarkdownV2 because the only thing to escape there is a single dot
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+
         await Send(userId, $"""
-        **{Name.ToMarkdownV2()}** {GetVersion()}\.
+        **{Name.ToMarkdownV2()}** {version?.ToDisplayString().ToMarkdownV2() ?? "unversioned somehow"}\.
 
         [Open\-source\!](https://github.com/bnfour/tg-bots-dotnet)
-        by bnfour, 2023–2024\.
+        by bnfour, 2023–2024, 2026\.
         """);
     }
 
@@ -375,26 +375,9 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
         return new BotInfoModel
         {
             IsOnline = Enabled,
-            Username = Enabled ? (await _client!.GetMeAsync()).Username : null
+            Username = Enabled ? (await _client!.GetMe()).Username : null
         };
     }
-
-    /// <summary>
-    /// Get the app version for about command.
-    /// </summary>
-    /// <returns>The version as a string ready to be put to bot's response,
-    /// with MarkdownV2 formatting and everything.</returns>
-    private static string GetVersion()
-    {
-        var version = Assembly.GetExecutingAssembly().GetName().Version;
-        // dot is escaped for tg's markdown
-        var formattedVersion = $"{version?.Major ?? 0}\\.{version?.Minor ?? 0}";
-        #if DEBUG
-            formattedVersion += " debug";
-        #endif
-        return formattedVersion;
-    }
-
     #endregion
 
 }
