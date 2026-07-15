@@ -121,10 +121,10 @@ A small refactoring-focused release before deprecation.
 Notable changes include:
 - Moved to latest LTS runtime, .NET 10
 - Updated used references, code updated to match new APIs
-- `CatMacroBot` marked as obsolete
+- `CatMacroBot` marked as obsolete — even more "use at your own risk" than the rest of the repo
 - Optimized SVGs, CSSs; HTML pages are now a bit more standards-complying
-- Slightly better code
-- Fixed some typos
-- No longer uses brand new GUIDs every time where unnecessary, saving entropy
+- Slightly better(?) code
+- Fixed some typos, including some in Ladder bot's output that were there for years
+- Ladder bot no longer uses brand new GUIDs every time where unnecessary, saving entropy
 
 This is the last release for this repo.
