@@ -73,10 +73,10 @@ public abstract class BotBase: IBot, IBotWebhook, IBotInfo
     #endregion
 
     /// <summary>
-    /// If set to false, the bot is not available and will throw on API usage.
+    /// If false, the bot is not available and will throw on API usage.
     /// Checking for this is supposed to be caller's responsibility.
     /// </summary>
-    public bool Enabled => _client != null || _webhookUrl != null;
+    public bool Enabled => _client != null && _webhookUrl != null;
 
     /// <summary>
     /// Constructor.
